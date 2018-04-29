@@ -4,6 +4,7 @@ import Data.List
 import qualified Data.Map.Strict as Map
 
 type Problem = String -> String
+type Problems = [(String, Problem, IO String)]
 
 primes :: [Int]
 primes = 2 : filter (null . tail . pfactors) [3,5..]

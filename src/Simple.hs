@@ -97,16 +97,16 @@ p13 input = let numbers = map read $ lines input :: [Integer]
             in take 10 $ show.sum $ numbers
 
 p14 :: Problem
-p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)) [x | x <- [1..size]]
+p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)) [1..size]
     where
     size = read input - 1:: Int
-    collatz n = (takeWhile (>1) $ iterate next n) ++ [1]
+    collatz n = takeWhile (> 1) (iterate next n) ++ [1]
     next x
         | even x  = x `div` 2
         | odd  x  = 3 * x + 1
         | otherwise = undefined
 
-problems :: [(String, Problem, IO String)]
+problems :: Problems
 problems = [
     ("Problem 3", p3, return"600851475143"),
     ("Problem 4", p4, return "3"),
@@ -122,5 +122,4 @@ problems = [
     ("Problem 14", p14, return "1000000")]
 
 main :: IO ()
-main = do
-  mapM_ printProblem problems
+main = mapM_ printProblem problems
