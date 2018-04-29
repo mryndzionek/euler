@@ -182,7 +182,8 @@ problems = [
     ("Problem 15", p15, return "20"),
     ("Problem 16", p16, return "1000"),
     ("Problem 17", p17, return "1000"),
-    ("Problem 18", p18, readFile "inputs/p18.txt")]
+    ("Problem 18", p18, readFile "inputs/p18.txt"),
+    ("Problem 67", p18, readFile "inputs/p67.txt")]
 
 main :: IO ()
 main = mapM_ printProblem problems
