@@ -164,7 +164,15 @@ p18 input = (show.head) $ foldl foldtr (reduce (head triangle)) (tail triangle)
     trans (x:y:ys) = Just (max x y, y:ys)
     trans [x] = Just (x, [])
     trans [] = Nothing
-    
+
+p30 :: Problem
+p30 input = show $ sum $ filter (\n -> n == digPow n) [2..limit]
+    where
+    limit =   9^ (fst . head) (dropWhile (uncurry (<)) [(x, numDigits x) | x <- [1 ..]])
+    powers = read input :: Integer
+    digPow = sum . map ((^powers) . toInteger . digitToInt) . show
+    numDigits n = length $ show (9^powers*n)
+
 problems :: Problems
 problems = [
     ("Problem 3", p3, return"600851475143"),
@@ -183,6 +191,7 @@ problems = [
     ("Problem 16", p16, return "1000"),
     ("Problem 17", p17, return "1000"),
     ("Problem 18", p18, readFile "inputs/p18.txt"),
+    ("Problem 30", p30, return "5"),
     ("Problem 67", p18, readFile "inputs/p67.txt")]
 
 main :: IO ()
