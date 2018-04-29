@@ -100,12 +100,18 @@ p13 input = let numbers = map read $ lines input :: [Integer]
 p14 :: Problem
 p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)) [1..size]
     where
-    size = read input - 1:: Int
+    size = read input - 1 :: Int
     collatz n = takeWhile (> 1) (iterate next n) ++ [1]
     next x
         | even x  = x `div` 2
         | odd  x  = 3 * x + 1
         | otherwise = undefined
+
+p16 :: Problem
+p16 input = show.sum $ map digitToInt $ show power
+    where
+    power = 2 ^ exp' :: Integer
+    exp' = read input :: Integer
 
 problems :: Problems
 problems = [
@@ -121,7 +127,8 @@ problems = [
     ("Problem 12", p12, return "500"),
     ("Problem 13", p13, readFile "inputs/p13.txt"),
     ("Problem 14", p14, return "1000000"),
-    ("Problem 15", p15, return "20")]
+    ("Problem 15", p15, return "20"),
+    ("Problem 16", p16, return "1000")]
 
 main :: IO ()
 main = mapM_ printProblem problems

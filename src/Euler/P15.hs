@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveFunctor #-}
-module Euler.P15 (p15) where
+module Euler.P15 (p15, p15_brute) where
 
+import Data.List
 import Data.Fix
 import Euler.Util
 
@@ -23,7 +24,16 @@ countAlg (NodeF _ lst) = sum lst
 paths :: Int -> Int
 paths size = hylo countAlg (coalg size) (0, 0)
 
-p15 :: Problem
-p15 input = show $ paths size
+p15_brute :: Problem
+p15_brute input = show $ paths size
     where
     size = read input :: Int
+
+p15 :: Problem
+p15 input = show.last.last $ grid
+    where
+    size = 1 + read input :: Int
+    grid = take size $ iterate next (replicate size 1) :: [[Integer]]
+    next row = unfoldr grow (0, row)
+    grow (s, r:rs) = Just (s + r, (s + r,rs))
+    grow (_, []) = Nothing
