@@ -144,16 +144,26 @@ p17 input = (show.length.concat) $ concatMap convert [1..size]
         (7, "seventy"),
         (8, "eighty"),
         (9, "ninety")]
-    convert n = unfoldr decompose n
+    convert = unfoldr decompose
     decompose n
         | n == 0                        = Nothing
-        | n < 20                        = (,) <$> (stitch [Map.lookup n toTwenty]) <*> (pure 0)
-        | n >= 20 && n < 100            = (,) <$> (stitch [Map.lookup (n `div` 10) toHundred]) <*> (pure $ n `rem` 10)
-        | n < 1000 && n `mod` 100 == 0  = (,) <$> (stitch [Map.lookup (n `div` 100) toTwenty, Just "hundred"]) <*> (pure 0)
-        | n > 100 && n <= 999           = (,) <$> (stitch [Map.lookup (n `div` 100) toTwenty, Just "hundredand"]) <*> (pure $ n `rem` 100)
+        | n < 20                        = (,) <$> stitch [Map.lookup n toTwenty] <*> pure 0
+        | n >= 20 && n < 100            = (,) <$> stitch [Map.lookup (n `div` 10) toHundred] <*> pure ( n `rem` 10)
+        | n < 1000 && n `mod` 100 == 0  = (,) <$> stitch [Map.lookup (n `div` 100) toTwenty, Just "hundred"] <*> pure 0
+        | n > 100 && n <= 999           = (,) <$> stitch [Map.lookup (n `div` 100) toTwenty, Just "hundredand"] <*> pure ( n `rem` 100)
         | n == 1000                     = Just ("onethousand", 0)
         | otherwise                     = Nothing
-    stitch l = concat <$> (sequence l)
+    stitch l = concat <$> sequence l
+
+p18 :: Problem
+p18 input = (show.head) $ foldl foldtr (reduce (head triangle)) (tail triangle)
+    where
+    foldtr red row = reduce $ zipWith (+) red row
+    triangle = reverse $ map (map read . splitOn " ") $ lines input :: [[Int]]
+    reduce = unfoldr trans
+    trans (x:y:ys) = Just (max x y, y:ys)
+    trans [x] = Just (x, [])
+    trans [] = Nothing
     
 problems :: Problems
 problems = [
@@ -171,7 +181,8 @@ problems = [
     ("Problem 14", p14, return "1000000"),
     ("Problem 15", p15, return "20"),
     ("Problem 16", p16, return "1000"),
-    ("Problem 17", p17, return "1000")]
+    ("Problem 17", p17, return "1000"),
+    ("Problem 18", p18, readFile "inputs/p18.txt")]
 
 main :: IO ()
 main = mapM_ printProblem problems
