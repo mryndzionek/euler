@@ -1,0 +1,31 @@
+name:                euler
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/mryndzionek/euler#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Author name here
+maintainer:          mryndzionek@gmail.com
+copyright:           2018 Mariusz Ryndzionek
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Euler.Util
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       containers
+  ghc-options:         -Wall
+
+executable simple
+  hs-source-dirs:      src
+  main-is:             Simple.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N -Wall
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5,
+                       containers, split
+  other-modules:       Euler.Util
