@@ -113,6 +113,48 @@ p16 input = show.sum $ map digitToInt $ show power
     power = 2 ^ exp' :: Integer
     exp' = read input :: Integer
 
+p17 :: Problem
+p17 input = (show.length.concat) $ concatMap convert [1..size]
+    where
+    size = read input - 1 :: Int
+    toTwenty = Map.fromList [(1, "one"),
+        (2, "two"),
+        (3, "three"),
+        (4, "four"),
+        (5, "five"),
+        (6, "six"),
+        (7, "seven"),
+        (8, "eight"),
+        (9, "nine"),
+        (10, "ten"),
+        (11, "eleven"),
+        (12, "twelve"),
+        (13, "thirteen"),
+        (14, "fourteen"),
+        (15, "fifteen"),
+        (16, "sixteen"),
+        (17, "seventeen"),
+        (18, "eighteen"),
+        (19, "nineteen")]
+    toHundred = Map.fromList [(2, "twenty"),
+        (3, "thirty"),
+        (4, "forty"),
+        (5, "fifty"),
+        (6, "sixty"),
+        (7, "seventy"),
+        (8, "eighty"),
+        (9, "ninety")]
+    convert n = unfoldr decompose n
+    decompose n
+        | n == 0                        = Nothing
+        | n < 20                        = (,) <$> (stitch [Map.lookup n toTwenty]) <*> (pure 0)
+        | n >= 20 && n < 100            = (,) <$> (stitch [Map.lookup (n `div` 10) toHundred]) <*> (pure $ n `rem` 10)
+        | n < 1000 && n `mod` 100 == 0  = (,) <$> (stitch [Map.lookup (n `div` 100) toTwenty, Just "hundred"]) <*> (pure 0)
+        | n > 100 && n <= 999           = (,) <$> (stitch [Map.lookup (n `div` 100) toTwenty, Just "hundredand"]) <*> (pure $ n `rem` 100)
+        | n == 1000                     = Just ("onethousand", 0)
+        | otherwise                     = Nothing
+    stitch l = concat <$> (sequence l)
+    
 problems :: Problems
 problems = [
     ("Problem 3", p3, return"600851475143"),
@@ -128,7 +170,8 @@ problems = [
     ("Problem 13", p13, readFile "inputs/p13.txt"),
     ("Problem 14", p14, return "1000000"),
     ("Problem 15", p15, return "20"),
-    ("Problem 16", p16, return "1000")]
+    ("Problem 16", p16, return "1000"),
+    ("Problem 17", p17, return "1000")]
 
 main :: IO ()
 main = mapM_ printProblem problems
