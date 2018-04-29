@@ -5,6 +5,7 @@ import Data.List
 import Data.List.Split
 import qualified Data.Map.Strict as Map
 
+import Euler.P15
 import Euler.Util
 
 p3 :: Problem
@@ -119,7 +120,8 @@ problems = [
     ("Problem 11", p11, readFile "inputs/p11.txt"),
     ("Problem 12", p12, return "500"),
     ("Problem 13", p13, readFile "inputs/p13.txt"),
-    ("Problem 14", p14, return "1000000")]
+    ("Problem 14", p14, return "1000000"),
+    ("Problem 15", p15, return "20")]
 
 main :: IO ()
 main = mapM_ printProblem problems
