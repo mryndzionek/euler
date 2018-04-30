@@ -227,6 +227,12 @@ p23 input = show.sum $ [x | x <- [1..size], not $ Set.member x isAbundantSum]
     abundant = [x | x <- [1..size], x < sumd x]
     isAbundant = Set.fromList abundant
     isAbundantSum = Set.fromList [x + y | x <- abundant, y <- [x..size - x], Set.member y isAbundant]
+
+p24 :: Problem
+p24 input = concat $ map show $ last $ take size $ sort $ permutations digits
+    where
+    digits = [0..9] :: [Int]
+    size = read input :: Int
     
 p30 :: Problem
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
@@ -261,6 +267,7 @@ problems = [
     ("Problem 21", p21, return "10000"),
     ("Problem 22", p22, readFile "inputs/p22.txt"),
     ("Problem 23", p23, return "28123"),
+    ("Problem 24", p24, return "1000000"),
     ("Problem 30", p30, return "5"),
     ("Problem 67", p18, readFile "inputs/p67.txt")]
 
