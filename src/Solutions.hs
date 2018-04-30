@@ -8,6 +8,22 @@ import qualified Data.Map.Strict as Map
 import Euler.P15
 import Euler.Util
 
+p1 :: Problem
+p1 input = (show.sum) $ filter (multOf [3, 5]) [1..size - 1]
+    where
+    size = read input :: Int
+    multOf ms x = any (\f -> f x == 0) $ map (flip mod) ms
+
+p2 :: Problem
+p2 input = (show.sum) $ filter even fib
+    where
+    size = read input :: Int
+    fib = unfoldr uf (0, 1)
+    uf (a, b)
+        | s < size = Just (s, (b, s))
+        | otherwise = Nothing
+        where s = a + b
+
 p3 :: Problem
 p3 input = show $ maximum $ pfactors (read input)
 
@@ -165,16 +181,55 @@ p18 input = (show.head) $ foldl foldtr (reduce (head triangle)) (tail triangle)
     trans [x] = Just (x, [])
     trans [] = Nothing
 
-p30 :: Problem
-p30 input = show $ sum $ filter (\n -> n == digPow n) [2..limit]
+p19 :: Problem
+p19 input = (show.length) $ filter (==(7, 1)) wd_pairs
     where
-    limit =   9^ (fst . head) (dropWhile (uncurry (<)) [(x, numDigits x) | x <- [1 ..]])
+    years = read input :: Int
+    weekdays = cycle [1..7]
+    wd_pairs = zip weekdays (calendar years) :: [(Int, Int)]
+    mult n a = concat $ replicate n a
+    [january, march, may, july, august, october, december] = replicate 7 [1..31]
+    [april, june, november, september] = replicate 4 [1..30]
+    february = [1..28]
+    leap_february = [1..29]
+    rest_months = march ++ april ++ may ++ june ++ july ++ august ++ september ++ october ++ november ++ december
+    year = january ++ february ++ rest_months
+    leap_year = january ++ leap_february ++ rest_months
+    calendar y = mult lc leap_year ++ mult (y - 1 - lc) year
+        where
+        lc = (y - 1) `div` 4
+
+p20 :: Problem
+p20 input = show.sum $ map digitToInt $ (show.product) [1..size]
+    where
+    size = read input :: Integer
+
+p21 :: Problem
+p21 input = show.sum $ map fst $ filter (uncurry (==))
+    [(a, sumd b) | (a, b) <- [(a, b) | a <- [1..size - 1], let b = sumd a, a /= b]]
+    where
+    size = read input :: Integer
+    sumd x = sum $ divisors x
+
+p22 :: Problem
+p22 input = show.sum $ zipWith (*) [1 ..] (map score $ sort names)
+    where
+    names = map strip $ splitOn "," $ concat $ lines input
+    strip = dropWhileEnd (=='"') . dropWhile (=='"')
+    score name = sum $ map (\x -> ord x - ord '@') name
+    
+p30 :: Problem
+p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
+    where
+    limit =   9^ (fst . head) (dropWhile (uncurry (<)) [(x, numDigits x) | x <- [1..]])
     powers = read input :: Integer
     digPow = sum . map ((^powers) . toInteger . digitToInt) . show
     numDigits n = length $ show (9^powers*n)
 
 problems :: Problems
 problems = [
+    ("Problem 1", p1, return"1000"),
+    ("Problem 2", p2, return"4000000"),
     ("Problem 3", p3, return"600851475143"),
     ("Problem 4", p4, return "3"),
     ("Problem 5", p5, return "20"),
@@ -191,6 +246,10 @@ problems = [
     ("Problem 16", p16, return "1000"),
     ("Problem 17", p17, return "1000"),
     ("Problem 18", p18, readFile "inputs/p18.txt"),
+    ("Problem 19", p19, return "100"),
+    ("Problem 20", p20, return "100"),
+    ("Problem 21", p21, return "10000"),
+    ("Problem 22", p22, readFile "inputs/p22.txt"),
     ("Problem 30", p30, return "5"),
     ("Problem 67", p18, readFile "inputs/p67.txt")]
 
