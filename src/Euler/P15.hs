@@ -5,6 +5,9 @@ import Data.List
 import Data.Fix
 import Euler.Util
 
+-- This brute force solution using F-algebras
+-- Just for fun :)
+
 type Algebra f a = f a -> a
 type Coalgebra f a = a -> f a
 
@@ -28,6 +31,8 @@ p15_brute :: Problem
 p15_brute input = show $ paths size
     where
     size = read input :: Int
+
+-- This is more efficient solution
 
 p15 :: Problem
 p15 input = show.last.last $ grid
