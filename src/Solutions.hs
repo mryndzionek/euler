@@ -6,6 +6,8 @@ import Data.List.Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
+import System.Environment
+
 import Euler.P15
 import Euler.Util
 
@@ -229,7 +231,7 @@ p23 input = show.sum $ [x | x <- [1..size], not $ Set.member x isAbundantSum]
     isAbundantSum = Set.fromList [x + y | x <- abundant, y <- [x..size - x], Set.member y isAbundant]
 
 p24 :: Problem
-p24 input = concat $ map show $ last $ take size $ sort $ permutations digits
+p24 input = concatMap show (last $ take size $ sort $ permutations digits)
     where
     digits = [0..9] :: [Int]
     size = read input :: Int
@@ -242,34 +244,49 @@ p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
     digPow = sum . map ((^powers) . toInteger . digitToInt) . show
     numDigits n = length $ show (9^powers*n)
 
-problems :: Problems
-problems = [
-    ("Problem 1", p1, return"1000"),
-    ("Problem 2", p2, return"4000000"),
-    ("Problem 3", p3, return"600851475143"),
-    ("Problem 4", p4, return "3"),
-    ("Problem 5", p5, return "20"),
-    ("Problem 6", p6, return "100"),
-    ("Problem 7", p7, return "10001"),
-    ("Problem 8", p8, readFile "inputs/p8.txt"),
-    ("Problem 9", p9, return "1000"),
-    ("Problem 10", p10, return "2000000"),
-    ("Problem 11", p11, readFile "inputs/p11.txt"),
-    ("Problem 12", p12, return "500"),
-    ("Problem 13", p13, readFile "inputs/p13.txt"),
-    ("Problem 14", p14, return "1000000"),
-    ("Problem 15", p15, return "20"),
-    ("Problem 16", p16, return "1000"),
-    ("Problem 17", p17, return "1000"),
-    ("Problem 18", p18, readFile "inputs/p18.txt"),
-    ("Problem 19", p19, return "100"),
-    ("Problem 20", p20, return "100"),
-    ("Problem 21", p21, return "10000"),
-    ("Problem 22", p22, readFile "inputs/p22.txt"),
-    ("Problem 23", p23, return "28123"),
-    ("Problem 24", p24, return "1000000"),
-    ("Problem 30", p30, return "5"),
-    ("Problem 67", p18, readFile "inputs/p67.txt")]
+problems :: Map.Map Int (Problem, IO String)
+problems = Map.fromList [
+   (  1, ( p1, return"1000")),
+   (  2, ( p2, return"4000000")),
+   (  3, ( p3, return"600851475143")),
+   (  4, ( p4, return "3")),
+   (  5, ( p5, return "20")),
+   (  6, ( p6, return "100")),
+   (  7, ( p7, return "10001")),
+   (  8, ( p8, readFile "inputs/p8.txt")),
+   (  9, ( p9, return "1000")),
+   ( 10, (p10, return "2000000")),
+   ( 11, (p11, readFile "inputs/p11.txt")),
+   ( 12, (p12, return "500")),
+   ( 13, (p13, readFile "inputs/p13.txt")),
+   ( 14, (p14, return "1000000")),
+   ( 15, (p15, return "20")),
+   ( 16, (p16, return "1000")),
+   ( 17, (p17, return "1000")),
+   ( 18, (p18, readFile "inputs/p18.txt")),
+   ( 19, (p19, return "100")),
+   ( 20, (p20, return "100")),
+   ( 21, (p21, return "10000")),
+   ( 22, (p22, readFile "inputs/p22.txt")),
+   ( 23, (p23, return "28123")),
+   ( 24, (p24, return "1000000")),
+   ( 30, (p30, return "5")),
+   ( 67, (p18, readFile "inputs/p67.txt"))]
+
+handle :: [String] -> IO ()
+handle (_:_:_) = putStrLn "Passing input not supported yet !!!"
+
+handle (a:_) = case Map.lookup p problems of
+                    Nothing -> putStrLn "Problem not yet solved !!!"
+                    Just (pr, i) -> printProblem (p, pr, i)
+                    where
+                    p = read a :: Int
+
+handle [] = mapM_ printProblem problems'
+    where
+    problems' = map (\(n, (p, i)) -> (n, p, i)) $ Map.toList problems
 
 main :: IO ()
-main = mapM_ printProblem problems
+main = do
+    args <- getArgs
+    handle args

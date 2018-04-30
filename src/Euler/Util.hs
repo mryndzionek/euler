@@ -4,7 +4,6 @@ import Data.List
 import qualified Data.Map.Strict as Map
 
 type Problem = String -> String
-type Problems = [(String, Problem, IO String)]
 
 primes :: [Int]
 primes = 2 : filter (null . tail . pfactors) [3,5..]
@@ -37,7 +36,7 @@ count a = Map.toList $ foldr f Map.empty a
         Nothing -> Map.insert k 1 m
         Just _  -> Map.adjust (+1) k m
 
-printProblem :: (String, Problem, IO String) -> IO ()
-printProblem (name, problem, input) = do
+printProblem :: (Int, Problem, IO String) -> IO ()
+printProblem (number, problem, input) = do
     i <- input
-    putStrLn $ name ++ ": " ++ problem i
+    putStrLn $ "Problem " ++ show number ++ ": " ++ problem i
