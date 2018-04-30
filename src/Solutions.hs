@@ -4,6 +4,7 @@ import Data.Char
 import Data.List
 import Data.List.Split
 import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
 
 import Euler.P15
 import Euler.Util
@@ -217,6 +218,15 @@ p22 input = show.sum $ zipWith (*) [1 ..] (map score $ sort names)
     names = map strip $ splitOn "," $ concat $ lines input
     strip = dropWhileEnd (=='"') . dropWhile (=='"')
     score name = sum $ map (\x -> ord x - ord '@') name
+
+p23 :: Problem
+p23 input = show.sum $ [x | x <- [1..size], not $ Set.member x isAbundantSum]
+    where
+    size = read input :: Int
+    sumd x = sum $ divisors x
+    abundant = [x | x <- [1..size], x < sumd x]
+    isAbundant = Set.fromList abundant
+    isAbundantSum = Set.fromList [x + y | x <- abundant, y <- [x..size - x], Set.member y isAbundant]
     
 p30 :: Problem
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
@@ -250,6 +260,7 @@ problems = [
     ("Problem 20", p20, return "100"),
     ("Problem 21", p21, return "10000"),
     ("Problem 22", p22, readFile "inputs/p22.txt"),
+    ("Problem 23", p23, return "28123"),
     ("Problem 30", p30, return "5"),
     ("Problem 67", p18, readFile "inputs/p67.txt")]
 
