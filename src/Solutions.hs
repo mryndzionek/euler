@@ -248,7 +248,13 @@ p26 input = show.snd.maximum $ zip recuring ([1..] :: [Int])
     limit = read input :: Int
     recur n = unfoldr (\a -> Just (a `mod` n, 10 * (a `mod` n))) 10
     recuring = [length.Set.fromList $ take limit $ recur n | n <- [1..limit]] :: [Int]
-    
+
+p27 :: Problem
+p27 input = show.product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit], b <- [-limit..limit]]
+    where
+    plen a b = length $ takeWhile (\x -> (length . pfactors) x == 1) [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
+    limit = read input :: Int
+
 p30 :: Problem
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
     where
@@ -284,7 +290,8 @@ problems = Map.fromList [
    ( 23, (p23, return "28123")),
    ( 24, (p24, return "1000000")),
    ( 25, (p25, return "1000")),
-   ( 25, (p26, return "1000")),
+   ( 26, (p26, return "1000")),
+   ( 27, (p27, return "1000")),
    ( 30, (p30, return "5")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
