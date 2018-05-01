@@ -24,6 +24,9 @@ divisors n = (1:) $ nub $ concat [ [x, div n x] | x <- [2..limit], rem n x == 0 
      sqr :: Integral a => a -> Double
      sqr = sqrt.fromIntegral
 
+fibs :: [Integer]
+fibs = unfoldr (\(a, b) -> Just (a, (b, a + b))) (1, 2)
+
 safeLu :: Int -> [a] -> Maybe a
 safeLu i a
     | (i >= 0) && (length a > i) = Just (a !! i)

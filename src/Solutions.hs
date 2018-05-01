@@ -24,14 +24,9 @@ p1 input = (show.sum) $ filter (multOf [3, 5]) [1..size - 1]
     multOf ms x = any (\f -> f x == 0) $ map (flip mod) ms
 
 p2 :: Problem
-p2 input = (show.sum) $ filter even fib
+p2 input = (show.sum) $ filter even $ takeWhile (< size) fibs
     where
-    size = read input :: Int
-    fib = unfoldr uf (0, 1)
-    uf (a, b)
-        | s < size = Just (s, (b, s))
-        | otherwise = Nothing
-        where s = a + b
+    size = read input :: Integer
 
 p3 :: Problem
 p3 input = show $ maximum $ pfactors (read input)
@@ -241,6 +236,11 @@ p24 input = concatMap show (last $ take size $ sort $ permutations digits)
     where
     digits = [0..9] :: [Int]
     size = read input :: Int
+
+p25 :: Problem
+p25 input = show $ (+1).length $ takeWhile (\a -> length (show a) < size) (1:fibs)
+    where
+    size = read input :: Int
     
 p30 :: Problem
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
@@ -276,6 +276,7 @@ problems = Map.fromList [
    ( 22, (p22, readFile "inputs/p22.txt")),
    ( 23, (p23, return "28123")),
    ( 24, (p24, return "1000000")),
+   ( 25, (p25, return "1000")),
    ( 30, (p30, return "5")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
