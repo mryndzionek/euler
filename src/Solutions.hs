@@ -241,6 +241,13 @@ p25 :: Problem
 p25 input = show $ (+1).length $ takeWhile (\a -> length (show a) < size) (1:fibs)
     where
     size = read input :: Int
+
+p26 :: Problem
+p26 input = show.snd.maximum $ zip recuring ([1..] :: [Int])
+    where
+    limit = read input :: Int
+    recur n = unfoldr (\a -> Just (a `mod` n, 10 * (a `mod` n))) 10
+    recuring = [length.Set.fromList $ take limit $ recur n | n <- [1..limit]] :: [Int]
     
 p30 :: Problem
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
@@ -277,6 +284,7 @@ problems = Map.fromList [
    ( 23, (p23, return "28123")),
    ( 24, (p24, return "1000000")),
    ( 25, (p25, return "1000")),
+   ( 25, (p26, return "1000")),
    ( 30, (p30, return "5")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
