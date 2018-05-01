@@ -6,6 +6,12 @@ import Data.List.Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
+import Control.Applicative
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Maybe
+import qualified Control.Exception as Ex
+import Safe
+
 import System.Environment
 
 import Euler.P15
@@ -273,8 +279,28 @@ problems = Map.fromList [
    ( 30, (p30, return "5")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
+mayFile :: FilePath -> MaybeT IO String
+mayFile fp = do
+    res <- liftIO $ Ex.try (readFile fp) :: MaybeT IO (Either Ex.SomeException String)
+    case res of
+         Right contents -> return contents
+         Left _ -> MaybeT $ return Nothing
+
+getInput :: String -> IO String
+getInput i = do
+    res <- runMaybeT $ MaybeT (return number) <|> (pure i >>= mayFile) <|> pure i
+    case res of
+         Nothing -> undefined -- will never happen, as the last alternative is 'pure i'
+         Just s  -> return s
+    where
+    number = show <$> (readMay i :: Maybe Int)
+    
 handle :: [String] -> IO ()
-handle (_:_:_) = putStrLn "Passing input not supported yet !!!"
+handle (a1:a2:_) = case Map.lookup p problems of
+                        Nothing -> putStrLn "Problem not yet solved !!!"
+                        Just (pr, _) -> printProblem (p, pr, getInput a2)
+                        where
+                        p = read a1 :: Int
 
 handle (a:_) = case Map.lookup p problems of
                     Nothing -> putStrLn "Problem not yet solved !!!"
