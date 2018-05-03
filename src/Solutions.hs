@@ -255,6 +255,20 @@ p27 input = show.product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit
     plen a b = length $ takeWhile (\x -> (length . pfactors) x == 1) [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
     limit = read input :: Int
 
+p28 :: Problem
+p28 input = show.sum.concat $ diagonals
+    where
+    size = read input :: Integer
+    maxLevel = (size - 1) `div` 2
+    diagonals = [1] : [take 4 $ iterate (\x -> x - 2 * l) s |
+                       l <- [1..maxLevel], let a = 2 * l + 1,
+                                           let s = a * a] :: [[Integer]]
+
+p29 :: Problem
+p29 input = show.length.nub $ [a ^ b | a <- [2..limit], b <- [2..limit]]
+    where
+    limit = read input :: Integer
+
 p30 :: Problem
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
     where
@@ -292,6 +306,8 @@ problems = Map.fromList [
    ( 25, (p25, return "1000")),
    ( 26, (p26, return "1000")),
    ( 27, (p27, return "1000")),
+   ( 28, (p28, return "1001")),
+   ( 29, (p29, return "100")),
    ( 30, (p30, return "5")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
