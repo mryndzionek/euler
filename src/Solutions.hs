@@ -289,6 +289,16 @@ p31 input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
     repls = [repl c | c <- [1, 2, 5, 10, 20, 50, 100, 200]]
     start = 1 : replicate amount 0 :: [Integer]
 
+p32 :: Problem
+p32 input = show.sum.nub $ map (uncurry (*)) candidates
+    where
+    limit = read input :: Int
+    candidates = filter (\(n,m) -> isPandigit $ toStr (n, m))
+                 [(n, m) | n <- [1..limit - 1], m <- [1..limit `div` n]] :: [(Int, Int)]
+    toStr (n, m) = show n ++ show m ++ show (m*n)
+    isPandigit n = let m = filter (/= '0') n in
+                           (length m == 9) && length m == length (Set.fromList m)
+
 problems :: Map.Map Int (Problem, IO String)
 problems = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -322,6 +332,7 @@ problems = Map.fromList [
    ( 29, (p29, return "100")),
    ( 30, (p30, return "5")),
    ( 31, (p31, return "200")),
+   ( 32, (p32, return "10000")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
