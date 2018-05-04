@@ -277,6 +277,18 @@ p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
     digPow = sum . map ((^powers) . toInteger . digitToInt) . show
     numDigits n = length $ show (9^powers*n)
 
+-- Solution to problem 31 emulates the imperative dynamic programming solution
+-- and it is the first instance of solution that is a lot less elegant than
+-- the original imperative version :(
+
+p31 :: Problem
+p31 input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
+    where
+    amount = read input :: Int
+    repl n a = take (length a) [take (length a) $ replicate i 0 ++ a | i <- [0,n..]]
+    repls = [repl c | c <- [1, 2, 5, 10, 20, 50, 100, 200]]
+    start = 1 : replicate amount 0 :: [Integer]
+
 problems :: Map.Map Int (Problem, IO String)
 problems = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -309,6 +321,7 @@ problems = Map.fromList [
    ( 28, (p28, return "1001")),
    ( 29, (p29, return "100")),
    ( 30, (p30, return "5")),
+   ( 31, (p31, return "200")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
