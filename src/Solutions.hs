@@ -2,6 +2,7 @@ module Main where
 
 import Data.Char
 import Data.List
+import Data.Ratio
 import Data.List.Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
@@ -299,6 +300,23 @@ p32 input = show.sum.nub $ map (uncurry (*)) candidates
     isPandigit n = let m = filter (/= '0') n in
                            (length m == 9) && length m == length (Set.fromList m)
 
+p33 :: Solution
+p33 _ = show.denominator.product $ ([a % c | a <- [1..9],
+                                             b <- [1..9],
+                                             c <- [1..9],
+                                             isCancelling a b c,
+                                             a /= b && a/= c] :: [Ratio Integer])
+    where isCancelling a b c = ((10 * a + b)%(10 * b + c)) == (a % c)
+
+
+p34 :: Solution
+p34 _ = show.sum $ [x | x <- [3..limit+1], fsum x]
+    where
+    fsum x = x == sum (map (factorial . digitToInt) $ show x)
+    factorial n = factorials !! n
+    factorials = 1 : map (\n -> product [1..n]) [1..9]
+    limit = snd.head $ dropWhile (uncurry (<)) [(10^x, x * factorials !! 9) | x <- [1..]] :: Int
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -333,6 +351,8 @@ solutions = Map.fromList [
    ( 30, (p30, return "5")),
    ( 31, (p31, return "200")),
    ( 32, (p32, return "10000")),
+   ( 33, (p33, return "")),
+   ( 34, (p34, return "")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
