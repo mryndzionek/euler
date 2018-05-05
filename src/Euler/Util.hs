@@ -3,7 +3,7 @@ module Euler.Util where
 import Data.List
 import qualified Data.Map.Strict as Map
 
-type Problem = String -> String
+type Solution = String -> String
 
 primes :: [Int]
 primes = 2 : filter (null . tail . pfactors) [3,5..]
@@ -39,7 +39,7 @@ count a = Map.toList $ foldr f Map.empty a
         Nothing -> Map.insert k 1 m
         Just _  -> Map.adjust (+1) k m
 
-printProblem :: (Int, Problem, IO String) -> IO ()
-printProblem (number, problem, input) = do
+printSolution :: (Int, Solution, IO String) -> IO ()
+printSolution (number, problem, input) = do
     i <- input
     putStrLn $ "Problem " ++ show number ++ ": " ++ problem i

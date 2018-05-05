@@ -27,14 +27,14 @@ countAlg (NodeF _ lst) = sum lst
 paths :: Int -> Int
 paths size = hylo countAlg (coalg size) (0, 0)
 
-p15_brute :: Problem
+p15_brute :: Solution
 p15_brute input = show $ paths size
     where
     size = read input :: Int
 
 -- This is more efficient solution
 
-p15 :: Problem
+p15 :: Solution
 p15 input = show.last.last $ grid
     where
     size = 1 + read input :: Int

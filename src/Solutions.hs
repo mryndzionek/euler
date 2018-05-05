@@ -17,21 +17,21 @@ import System.Environment
 import Euler.P15
 import Euler.Util
 
-p1 :: Problem
+p1 :: Solution
 p1 input = (show.sum) $ filter (multOf [3, 5]) [1..size - 1]
     where
     size = read input :: Int
     multOf ms x = any (\f -> f x == 0) $ map (flip mod) ms
 
-p2 :: Problem
+p2 :: Solution
 p2 input = (show.sum) $ filter even $ takeWhile (< size) fibs
     where
     size = read input :: Integer
 
-p3 :: Problem
+p3 :: Solution
 p3 input = show $ maximum $ pfactors (read input)
 
-p4 :: Problem
+p4 :: Solution
 p4 input = show $ maximum $ filter isPalindrome numbers
     where
     isPalindrome x = let s = show x
@@ -42,7 +42,7 @@ p4 input = show $ maximum $ filter isPalindrome numbers
     beg = 10 ^ (size - 1)
     end = (10 ^ size) - 1
 
-p5 :: Problem
+p5 :: Solution
 p5 input = show $ reduce . lp . nub . concat $ map (count . pfactors) [2..size]
     where
     size = read input :: Int
@@ -54,18 +54,18 @@ p5 input = show $ reduce . lp . nub . concat $ map (count . pfactors) [2..size]
                      Nothing -> Map.insert x y m
                      Just _  -> Map.adjust (max y) x m
 
-p6 :: Problem
+p6 :: Solution
 p6 input = show $ (s * s) - sum [x*x | x <- [1..size]]
     where
     size = read input :: Int
     s = sum [1..100]
 
-p7 :: Problem
+p7 :: Solution
 p7 input = show $ primes !! upper
     where
     upper = read input - 1 :: Int
 
-p8 :: Problem
+p8 :: Solution
 p8 input = show $ maximum $ unfoldr grow digits
     where
     digits = map digitToInt $ (concat . lines) input
@@ -73,7 +73,7 @@ p8 input = show $ maximum $ unfoldr grow digits
                      (_, [])  -> Nothing
                      (xs, _)  -> Just (product xs, drop 1 seed)
 
-p9 :: Problem
+p9 :: Solution
 p9 input = show $ reduce [[a, b, c] | a <- [1..sum'],
                                       b <- [1..sum' - a],
                                       let c = sum' - a - b,
@@ -83,12 +83,12 @@ p9 input = show $ reduce [[a, b, c] | a <- [1..sum'],
     sum' = read input :: Int
     
 
-p10 :: Problem
+p10 :: Solution
 p10 input = show $ sum (takeWhile (< size) primes)
     where
     size = read input :: Int
 
-p11 :: Problem
+p11 :: Solution
 p11 input = show $ maximum $ map (\x -> (product <$> x, x)) g
     where
     matrix = map (map read . splitOn " ") $ lines input
@@ -105,7 +105,7 @@ p11 input = show $ maximum $ map (\x -> (product <$> x, x)) g
     lu :: [[Int]] -> (Int, Int) -> Maybe Int
     lu a (x, y) = safeLu y a >>= safeLu x
 
-p12 :: Problem
+p12 :: Solution
 p12 input = show $ snd . head $ dropWhile ((< size) . fst) (map cp triangle)
     where
     size = read input :: Int
@@ -113,11 +113,11 @@ p12 input = show $ snd . head $ dropWhile ((< size) . fst) (map cp triangle)
     triangle :: [Int]
     triangle = [sum [1..x] | x <- [1..]]
 
-p13 :: Problem
+p13 :: Solution
 p13 input = let numbers = map read $ lines input :: [Integer]
             in take 10 $ show.sum $ numbers
 
-p14 :: Problem
+p14 :: Solution
 p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)) [1..size]
     where
     size = read input - 1 :: Int
@@ -127,13 +127,13 @@ p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)
         | odd  x  = 3 * x + 1
         | otherwise = undefined
 
-p16 :: Problem
+p16 :: Solution
 p16 input = show.sum $ map digitToInt $ show power
     where
     power = 2 ^ exp' :: Integer
     exp' = read input :: Integer
 
-p17 :: Problem
+p17 :: Solution
 p17 input = (show.length.concat) $ concatMap convert [1..size]
     where
     size = read input - 1 :: Int
@@ -175,7 +175,7 @@ p17 input = (show.length.concat) $ concatMap convert [1..size]
         | otherwise                     = Nothing
     stitch l = concat <$> sequence l
 
-p18 :: Problem
+p18 :: Solution
 p18 input = (show.head) $ foldl foldtr (reduce (head triangle)) (tail triangle)
     where
     foldtr red row = reduce $ zipWith (+) red row
@@ -185,7 +185,7 @@ p18 input = (show.head) $ foldl foldtr (reduce (head triangle)) (tail triangle)
     trans [x] = Just (x, [])
     trans [] = Nothing
 
-p19 :: Problem
+p19 :: Solution
 p19 input = (show.length) $ filter (==(7, 1)) wd_pairs
     where
     years = read input :: Int
@@ -203,26 +203,26 @@ p19 input = (show.length) $ filter (==(7, 1)) wd_pairs
         where
         lc = (y - 1) `div` 4
 
-p20 :: Problem
+p20 :: Solution
 p20 input = show.sum $ map digitToInt $ (show.product) [1..size]
     where
     size = read input :: Integer
 
-p21 :: Problem
+p21 :: Solution
 p21 input = show.sum $ map fst $ filter (uncurry (==))
     [(a, sumd b) | (a, b) <- [(a, b) | a <- [1..size - 1], let b = sumd a, a /= b]]
     where
     size = read input :: Integer
     sumd x = sum $ divisors x
 
-p22 :: Problem
+p22 :: Solution
 p22 input = show.sum $ zipWith (*) [1 ..] (map score $ sort names)
     where
     names = map strip $ splitOn "," $ concat $ lines input
     strip = dropWhileEnd (=='"') . dropWhile (=='"')
     score name = sum $ map (\x -> ord x - ord '@') name
 
-p23 :: Problem
+p23 :: Solution
 p23 input = show.sum $ [x | x <- [1..size], not $ Set.member x isAbundantSum]
     where
     size = read input :: Int
@@ -231,31 +231,31 @@ p23 input = show.sum $ [x | x <- [1..size], not $ Set.member x isAbundantSum]
     isAbundant = Set.fromList abundant
     isAbundantSum = Set.fromList [x + y | x <- abundant, y <- [x..size - x], Set.member y isAbundant]
 
-p24 :: Problem
+p24 :: Solution
 p24 input = concatMap show (last $ take size $ sort $ permutations digits)
     where
     digits = [0..9] :: [Int]
     size = read input :: Int
 
-p25 :: Problem
+p25 :: Solution
 p25 input = show $ (+1).length $ takeWhile (\a -> length (show a) < size) (1:fibs)
     where
     size = read input :: Int
 
-p26 :: Problem
+p26 :: Solution
 p26 input = show.snd.maximum $ zip recuring ([1..] :: [Int])
     where
     limit = read input :: Int
     recur n = unfoldr (\a -> Just (a `mod` n, 10 * (a `mod` n))) 10
     recuring = [length.Set.fromList $ take limit $ recur n | n <- [1..limit]] :: [Int]
 
-p27 :: Problem
+p27 :: Solution
 p27 input = show.product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit], b <- [-limit..limit]]
     where
     plen a b = length $ takeWhile (\x -> (length . pfactors) x == 1) [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
     limit = read input :: Int
 
-p28 :: Problem
+p28 :: Solution
 p28 input = show.sum.concat $ diagonals
     where
     size = read input :: Integer
@@ -264,12 +264,12 @@ p28 input = show.sum.concat $ diagonals
                        l <- [1..maxLevel], let a = 2 * l + 1,
                                            let s = a * a] :: [[Integer]]
 
-p29 :: Problem
+p29 :: Solution
 p29 input = show.length.nub $ [a ^ b | a <- [2..limit], b <- [2..limit]]
     where
     limit = read input :: Integer
 
-p30 :: Problem
+p30 :: Solution
 p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
     where
     limit =   9^ (fst . head) (dropWhile (uncurry (<)) [(x, numDigits x) | x <- [1..]])
@@ -281,7 +281,7 @@ p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
 -- and it is the first instance of solution that is a lot less elegant than
 -- the original imperative version :(
 
-p31 :: Problem
+p31 :: Solution
 p31 input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
     where
     amount = read input :: Int
@@ -289,7 +289,7 @@ p31 input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
     repls = [repl c | c <- [1, 2, 5, 10, 20, 50, 100, 200]]
     start = 1 : replicate amount 0 :: [Integer]
 
-p32 :: Problem
+p32 :: Solution
 p32 input = show.sum.nub $ map (uncurry (*)) candidates
     where
     limit = read input :: Int
@@ -299,8 +299,8 @@ p32 input = show.sum.nub $ map (uncurry (*)) candidates
     isPandigit n = let m = filter (/= '0') n in
                            (length m == 9) && length m == length (Set.fromList m)
 
-problems :: Map.Map Int (Problem, IO String)
-problems = Map.fromList [
+solutions :: Map.Map Int (Solution, IO String)
+solutions = Map.fromList [
    (  1, ( p1, return"1000")),
    (  2, ( p2, return"4000000")),
    (  3, ( p3, return"600851475143")),
@@ -352,21 +352,21 @@ getInput i = do
     number = show <$> (readMay i :: Maybe Int)
     
 handle :: [String] -> IO ()
-handle (a1:a2:_) = case Map.lookup p problems of
+handle (a1:a2:_) = case Map.lookup p solutions of
                         Nothing -> putStrLn "Problem not yet solved !!!"
-                        Just (pr, _) -> printProblem (p, pr, getInput a2)
+                        Just (pr, _) -> printSolution (p, pr, getInput a2)
                         where
                         p = read a1 :: Int
 
-handle (a:_) = case Map.lookup p problems of
+handle (a:_) = case Map.lookup p solutions of
                     Nothing -> putStrLn "Problem not yet solved !!!"
-                    Just (pr, i) -> printProblem (p, pr, i)
+                    Just (pr, i) -> printSolution (p, pr, i)
                     where
                     p = read a :: Int
 
-handle [] = mapM_ printProblem problems'
+handle [] = mapM_ printSolution solutions'
     where
-    problems' = map (\(n, (p, i)) -> (n, p, i)) $ Map.toList problems
+    solutions' = map (\(n, (p, i)) -> (n, p, i)) $ Map.toList solutions
 
 main :: IO ()
 main = do
