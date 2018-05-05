@@ -286,7 +286,7 @@ p31 input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
     where
     amount = read input :: Int
     repl n a = take (length a) [take (length a) $ replicate i 0 ++ a | i <- [0,n..]]
-    repls = [repl c | c <- [1, 2, 5, 10, 20, 50, 100, 200]]
+    repls = map repl [1, 2, 5, 10, 20, 50, 100, 200]
     start = 1 : replicate amount 0 :: [Integer]
 
 p32 :: Solution
