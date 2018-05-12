@@ -381,6 +381,22 @@ p41 _ = show.maximum $ filter isprime $ concatMap pandigits [4, 7]
     where
     pandigits n = map read $ permutations [intToDigit a | a <- [1..n]]
 
+p42 :: Solution
+p42 input = show.length $ filter (`Set.member` triangles) scores
+    where
+    scores = map wordToNum names
+    triangles = Set.fromList $ takeWhile (<=maximum scores) [n * (n + 1) `div` 2 | n <- [1..]]
+    wordToNum w = sum $ map (\x -> ord x - 64) w
+    strip = dropWhileEnd (=='"') . dropWhile (=='"')
+    names = map strip $ splitOn "," $ concat $ lines input
+
+p43 :: Solution
+p43 _ = show.sum $ (map (read . map intToDigit) found :: [Int])
+    where
+    found = filter test [p | p <- permutations [0..9], p !! 5 == 5]
+    test p = all ((==0).uncurry mod) $ zip (subs p) primes
+    subs p = map (read . (map intToDigit . (\ x -> (\ y z -> take 3 $ drop y z) x p))) [1 .. 7]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -424,6 +440,8 @@ solutions = Map.fromList [
    ( 39, (p39, return "1000")),
    ( 40, (p40, return "6")),
    ( 41, (p41, return "")),
+   ( 42, (p42, readFile "inputs/p42.txt")),
+   ( 43, (p43, return "")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
