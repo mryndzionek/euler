@@ -351,6 +351,36 @@ p37 _ = show.sum $ take 11 $ dropWhile (<8) $ filter isTrunc primes
         where
         s = show n
 
+p38 :: Solution
+p38 _ = maximum $ filter isPandigit candidates
+    where
+    candidates = concatMap candidate ranges
+    candidate a = takeWhile ((<10).length) $ scanl1 (++) $ map (show . (a *)) [1 ..]
+    ranges = concat [[99, 98..91], [999, 998..918], [9999, 9998..9182]] :: [Integer]
+    isPandigit n = let m = filter (/= '0') n in
+                           (length m == 9) && length m == length (Set.fromList m)
+
+p39 :: Solution
+p39 input = (show.snd.maximum) [(length $ triplets p, p) | p <- [2..limit]]
+    where
+    limit = read input :: Int
+    triplets p = [(a, b, c) | a <- [2..p `div` 3],
+                            let b = p * (p - 2 * a) `div` (2 * (p - a)),
+                            let c = p - a - b,
+                            b > a,
+                            p * (p - 2 * a) `mod` (2 * (p - a)) == 0]
+
+p40 :: Solution
+p40 input = (show.product) [d (10^a) | a <- [0..limit]]
+    where
+    limit = read input :: Int
+    d n = digitToInt.last $ take n (concatMap show ([1..] :: [Int]))
+
+p41 :: Solution
+p41 _ = show.maximum $ filter isprime $ concatMap pandigits [4, 7]
+    where
+    pandigits n = map read $ permutations [intToDigit a | a <- [1..n]]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -390,6 +420,10 @@ solutions = Map.fromList [
    ( 35, (p35, return "1000000")),
    ( 36, (p36, return "1000000")),
    ( 37, (p37, return "")),
+   ( 38, (p38, return "")),
+   ( 39, (p39, return "1000")),
+   ( 40, (p40, return "6")),
+   ( 41, (p41, return "")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
