@@ -2,6 +2,7 @@ module Euler.Util where
 
 import Data.List
 import qualified Data.Map.Strict as Map
+import System.TimeIt
 
 type Solution = String -> String
 
@@ -46,4 +47,4 @@ count a = Map.toList $ foldr f Map.empty a
 printSolution :: (Int, Solution, IO String) -> IO ()
 printSolution (number, problem, input) = do
     i <- input
-    putStrLn $ "Problem " ++ show number ++ ": " ++ problem i
+    timeIt $ putStr $ "Problem " ++ show number ++ ": " ++ problem i ++ ": "
