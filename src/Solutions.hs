@@ -1,5 +1,6 @@
 module Main where
 
+import Numeric
 import Data.Char
 import Data.List
 import Data.Ratio
@@ -317,6 +318,39 @@ p34 _ = show.sum $ [x | x <- [3..limit+1], fsum x]
     factorials = 1 : map (\n -> product [1..n]) [1..9]
     limit = snd.head $ dropWhile (uncurry (<)) [(10^x, x * factorials !! 9) | x <- [1..]] :: Int
 
+p35 :: Solution
+p35 input = show.length $ filter iscircular $ takeWhile (<limit) primes
+    where
+    limit = read input :: Int
+    iscircular n = all isprime $ rotations n
+    rotations n = take l $ map (read . take l) $ iterate (drop 1) $ cycle s
+        where
+        s = show n
+        l = length s
+
+p36 :: Solution
+p36 input = show.sum $ filter f [1..limit]
+    where
+    limit = read input :: Int
+    ispalindrome s = s == reverse s
+    tobin n = showIntAtBase 2 intToDigit n ""
+    f x = ispalindrome (show x) && ispalindrome (tobin x)
+
+
+p37 :: Solution
+p37 _ = show.sum $ take 11 $ dropWhile (<8) $ filter isTrunc primes
+    where
+    isTruncLeft s = all isprime $ take l $ map read $ iterate (drop 1) s
+        where
+        l = length s
+    isTruncRight s = all isprime $ take l $ map read $ iterate dropLast s
+        where
+        l = length s
+        dropLast xs = take (length xs - 1) xs
+    isTrunc n = isTruncLeft s && isTruncRight s
+        where
+        s = show n
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -353,6 +387,9 @@ solutions = Map.fromList [
    ( 32, (p32, return "10000")),
    ( 33, (p33, return "")),
    ( 34, (p34, return "")),
+   ( 35, (p35, return "1000000")),
+   ( 36, (p36, return "1000000")),
+   ( 37, (p37, return "")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String

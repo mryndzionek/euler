@@ -17,6 +17,10 @@ pfactors n = factor n primes
         | otherwise       =     factor n' ps
     factor _ [] = undefined
 
+isprime :: Int -> Bool
+isprime 1 = False
+isprime n = length (pfactors n) == 1
+
 divisors :: Integral a => a -> [a]
 divisors n = (1:) $ nub $ concat [ [x, div n x] | x <- [2..limit], rem n x == 0 ]
      where
