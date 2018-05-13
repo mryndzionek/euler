@@ -408,6 +408,19 @@ p44 _ = show.head $ candidates
     candidates = [j - k | j <- pentagonals, k <- takeWhile (< j) pentagonals,
                       isPentagonal (j - k), isPentagonal (j + k)]
 
+p45 :: Solution
+p45 input = show.head $ [t | t <- triangles, isPentagonal t, isHexagonal t]
+    where
+    start = read input :: Int
+    triangles = [n * (n + 1) `div` 2 | n <- [start..]]
+    isqrt = (sqrt . fromIntegral) :: Int -> Double
+    isPentagonal n = v == fromInteger (round v) && (round v `mod` 6 :: Int) == 0
+        where
+        v = isqrt (1 + 24 * n) + 1
+    isHexagonal n = v == fromInteger (round v) && (round v `mod` 4 :: Int) == 0
+        where
+        v = isqrt (1 + 8 * n) + 1
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -454,6 +467,7 @@ solutions = Map.fromList [
    ( 42, (p42, readFile "inputs/p42.txt")),
    ( 43, (p43, return "")),
    ( 44, (p44, return "")),
+   ( 45, (p45, return "286")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
