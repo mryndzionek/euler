@@ -421,6 +421,14 @@ p45 input = show.head $ [t | t <- triangles, isPentagonal t, isHexagonal t]
         where
         v = isqrt (1 + 8 * n) + 1
 
+p46 :: Solution
+p46 _ = show.head $ dropWhile check [9,11..]
+    where
+    check n = any isTwice $ map (n-) $ takeWhile (<= n) primes
+    isTwice m = v == fromInteger (round v)
+        where
+        v = sqrt (fromIntegral m / 2) :: Double
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -468,6 +476,7 @@ solutions = Map.fromList [
    ( 43, (p43, return "")),
    ( 44, (p44, return "")),
    ( 45, (p45, return "286")),
+   ( 46, (p46, return "")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
