@@ -397,6 +397,17 @@ p43 _ = show.sum $ (map (read . map intToDigit) found :: [Int])
     test p = all ((==0).uncurry mod) $ zip (subs p) primes
     subs p = map (read . (map intToDigit . (\ x -> (\ y z -> take 3 $ drop y z) x p))) [1 .. 7]
 
+p44 :: Solution
+p44 _ = show.head $ candidates
+    where
+    pentagonals = [(n*(3*n - 1)) `quot` 2 | n <- [1..]]
+    isPentagonal n = v == fromInteger (round v) && (round v `mod` 6 :: Int) == 0
+        where
+        v = isqrt (1 + 24 * n) + 1
+        isqrt = (sqrt . fromIntegral) :: Int -> Double
+    candidates = [j - k | j <- pentagonals, k <- takeWhile (< j) pentagonals,
+                      isPentagonal (j - k), isPentagonal (j + k)]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -442,6 +453,7 @@ solutions = Map.fromList [
    ( 41, (p41, return "")),
    ( 42, (p42, readFile "inputs/p42.txt")),
    ( 43, (p43, return "")),
+   ( 44, (p44, return "")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
