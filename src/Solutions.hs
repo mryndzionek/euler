@@ -429,6 +429,16 @@ p46 _ = show.head $ dropWhile check [9,11..]
         where
         v = sqrt (fromIntegral m / 2) :: Double
 
+p47 :: Solution
+p47 input = get $ filter check [map facts [a..a + len - 1] | a <- [0..]]
+    where
+    get = show.product.head.head
+    len = read input :: Int
+    check p = all ((== len) . length) p && (m == nub m)
+        where
+            m = concat p
+    facts n = map (uncurry (*)) $ (count.pfactors) n
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -477,6 +487,7 @@ solutions = Map.fromList [
    ( 44, (p44, return "")),
    ( 45, (p45, return "286")),
    ( 46, (p46, return "")),
+   ( 47, (p47, return "4")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
