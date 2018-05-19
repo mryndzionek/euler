@@ -8,8 +8,9 @@ import Data.List.Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
+import Control.Monad
+import Control.Monad.State
 import Control.Applicative
-import Control.Monad.IO.Class
 import Control.Monad.Trans.Maybe
 import qualified Control.Exception as Ex
 import Safe
@@ -254,7 +255,7 @@ p26 input = show.snd.maximum $ zip recuring ([1..] :: [Int])
 p27 :: Solution
 p27 input = show.product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit], b <- [-limit..limit]]
     where
-    plen a b = length $ takeWhile (\x -> (length . pfactors) x == 1) [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
+    plen a b = length $ takeWhile isprime [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
     limit = read input :: Int
 
 p28 :: Solution
@@ -430,14 +431,39 @@ p46 _ = show.head $ dropWhile check [9,11..]
         v = sqrt (fromIntegral m / 2) :: Double
 
 p47 :: Solution
-p47 input = get $ filter check [map facts [a..a + len - 1] | a <- [0..]]
+p47 input = get' $ filter check [map facts [a..a + len - 1] | a <- [0..]]
     where
-    get = show.product.head.head
+    get' = show.product.head.head
     len = read input :: Int
     check p = all ((== len) . length) p && (m == nub m)
         where
             m = concat p
     facts n = map (uncurry (*)) $ (count.pfactors) n
+
+p48 :: Solution
+p48 input = show.last10digits $ sum [n ^ n | n <- [1..limit]]
+    where
+    last10digits n = n `mod` (10^(10 :: Integer))
+    limit = read input :: Integer
+
+p49 :: Solution
+p49 _ = show $ flip (!!) 1 $ do
+    candidate <- takeWhile (<10000) $ dropWhile (<999) primes
+    step <- [1..9999]
+    let candidates = [candidate, candidate + step, candidate + 2 * step]
+    let sets = map (Set.fromList.show) candidates
+    guard $ candidate + 2 * step < 10000
+    guard $ all isprime candidates
+    guard $ all (== head sets) sets
+    return $ concatMap show candidates
+
+p50 :: Solution
+p50 input = show.maximum $ filter (isprime.snd) $ concatMap gen [take n sums | n <- [1..length sums]]
+    where
+    limit = read input :: Int
+    gen n = zip [length n, length n - 1..] (map (last n -) (0:n))
+    sums = takeWhile (<limit) cumul
+    cumul = scanl1 (+) primes
 
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
@@ -488,6 +514,9 @@ solutions = Map.fromList [
    ( 45, (p45, return "286")),
    ( 46, (p46, return "")),
    ( 47, (p47, return "4")),
+   ( 48, (p48, return "1000")),
+   ( 49, (p49, return "")),
+   ( 50, (p50, return "1000000")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
