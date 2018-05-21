@@ -4,9 +4,11 @@ import Numeric
 import Data.Char
 import Data.List
 import Data.Ratio
+import qualified Data.Permute as Per
 import Data.List.Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
+import Data.Numbers.Primes
 
 import Control.Monad
 import Control.Monad.State
@@ -65,7 +67,7 @@ p6 input = show $ (s * s) - sum [x*x | x <- [1..size]]
     s = sum [1..100]
 
 p7 :: Solution
-p7 input = show $ primes !! upper
+p7 input = show $ (primes !! upper :: Integer)
     where
     upper = read input - 1 :: Int
 
@@ -236,10 +238,13 @@ p23 input = show.sum $ [x | x <- [1..size], not $ Set.member x isAbundantSum]
     isAbundantSum = Set.fromList [x + y | x <- abundant, y <- [x..size - x], Set.member y isAbundant]
 
 p24 :: Solution
-p24 input = concatMap show (last $ take size $ sort $ permutations digits)
+p24 input = concatMap show (Per.elems . last $ take size perm)
     where
-    digits = [0..9] :: [Int]
     size = read input :: Int
+    perm = perm' $ Just $ Per.permute 10
+    perm' p = case p of
+                   Just p' -> p' : perm' (Per.next p')
+                   Nothing -> []
 
 p25 :: Solution
 p25 input = show $ (+1).length $ takeWhile (\a -> length (show a) < size) (1:fibs)
@@ -256,7 +261,7 @@ p26 input = show.snd.maximum $ zip recuring ([1..] :: [Int])
 p27 :: Solution
 p27 input = show.product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit], b <- [-limit..limit]]
     where
-    plen a b = length $ takeWhile isprime [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
+    plen a b = length $ takeWhile isPrime [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
     limit = read input :: Int
 
 p28 :: Solution
@@ -324,7 +329,8 @@ p35 :: Solution
 p35 input = show.length $ filter iscircular $ takeWhile (<limit) primes
     where
     limit = read input :: Int
-    iscircular n = all isprime $ rotations n
+    iscircular n = all isPrime $ rotations n
+    rotations :: Int -> [Int]
     rotations n = take l $ map (read . take l) $ iterate (drop 1) $ cycle s
         where
         s = show n
@@ -340,12 +346,12 @@ p36 input = show.sum $ filter f [1..limit]
 
 
 p37 :: Solution
-p37 _ = show.sum $ take 11 $ dropWhile (<8) $ filter isTrunc primes
+p37 _ = show.sum $ take 11 $ dropWhile (<8) $ (filter isTrunc primes :: [Integer])
     where
-    isTruncLeft s = all isprime $ take l $ map read $ iterate (drop 1) s
+    isTruncLeft s = all (isPrime :: Integer -> Bool) $ take l $ map read $ iterate (drop 1) s
         where
         l = length s
-    isTruncRight s = all isprime $ take l $ map read $ iterate dropLast s
+    isTruncRight s = all (isPrime :: Integer -> Bool) $ take l $ map read $ iterate dropLast s
         where
         l = length s
         dropLast xs = take (length xs - 1) xs
@@ -379,8 +385,9 @@ p40 input = (show.product) [d (10^a) | a <- [0..limit]]
     d n = digitToInt.last $ take n (concatMap show ([1..] :: [Int]))
 
 p41 :: Solution
-p41 _ = show.maximum $ filter isprime $ concatMap pandigits [4, 7]
+p41 _ = show.maximum $ filter isPrime $ concatMap pandigits [4, 7]
     where
+    pandigits :: Int -> [Integer]
     pandigits n = map read $ permutations [intToDigit a | a <- [1..n]]
 
 p42 :: Solution
@@ -396,7 +403,7 @@ p43 :: Solution
 p43 _ = show.sum $ (map (read . map intToDigit) found :: [Int])
     where
     found = filter test [p | p <- permutations [0..9], p !! 5 == 5]
-    test p = all ((==0).uncurry mod) $ zip (subs p) primes
+    test p = all ((==0).uncurry mod) $ zip (subs p) (primes :: [Integer])
     subs p = map (read . (map intToDigit . (\ x -> (\ y z -> take 3 $ drop y z) x p))) [1 .. 7]
 
 p44 :: Solution
@@ -424,7 +431,7 @@ p45 input = show.head $ [t | t <- triangles, isPentagonal t, isHexagonal t]
         v = isqrt (1 + 8 * n) + 1
 
 p46 :: Solution
-p46 _ = show.head $ dropWhile check [9,11..]
+p46 _ = show.head $ dropWhile check ([9,11..] :: [Integer])
     where
     check n = any isTwice $ map (n-) $ takeWhile (<= n) primes
     isTwice m = v == fromInteger (round v)
@@ -449,17 +456,17 @@ p48 input = show.last10digits $ sum [n ^ n | n <- [1..limit]]
 
 p49 :: Solution
 p49 _ = show $ flip (!!) 1 $ do
-    candidate <- takeWhile (<10000) $ dropWhile (<999) primes
+    candidate <- takeWhile (<10000) $ dropWhile (<999) (primes :: [Integer])
     step <- [1..9999]
     let candidates = [candidate, candidate + step, candidate + 2 * step]
     let sets = map (Set.fromList.show) candidates
     guard $ candidate + 2 * step < 10000
-    guard $ all isprime candidates
+    guard $ all isPrime candidates
     guard $ all (== head sets) sets
     return $ concatMap show candidates
 
 p50 :: Solution
-p50 input = show.maximum $ filter (isprime.snd) $ concatMap gen [take n sums | n <- [1..length sums]]
+p50 input = show.maximum $ filter (isPrime.snd) $ concatMap gen [take n sums | n <- [1..length sums]]
     where
     limit = read input :: Int
     gen n = zip [length n, length n - 1..] (map (last n -) (0:n))

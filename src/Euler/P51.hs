@@ -3,6 +3,7 @@ module Euler.P51 (p51) where
 import Euler.Util
 import Control.Monad
 import Data.List
+import Data.Numbers.Primes
 import qualified Data.Map.Strict as Map
 
 p51 :: Solution

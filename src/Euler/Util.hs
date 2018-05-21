@@ -3,11 +3,9 @@ module Euler.Util where
 import Data.List
 import qualified Data.Map.Strict as Map
 import System.TimeIt
+import Data.Numbers.Primes
 
 type Solution = String -> String
-
-primes :: [Int]
-primes = 2 : filter (null . tail . pfactors) [3,5..]
 
 pfactors :: Int -> [Int]
 pfactors n = factor n primes
@@ -17,10 +15,6 @@ pfactors n = factor n primes
         | n' `mod` p == 0 = p : factor (n' `div` p) (p:ps)
         | otherwise       =     factor n' ps
     factor _ [] = undefined
-
-isprime :: Int -> Bool
-isprime 1 = False
-isprime n = length (pfactors n) == 1
 
 divisors :: Integral a => a -> [a]
 divisors n = (1:) $ nub $ concat [ [x, div n x] | x <- [2..limit], rem n x == 0 ]
