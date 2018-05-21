@@ -482,6 +482,14 @@ p52 input = show.head $ do
         where
          upTo = read input :: Int
 
+p53 :: Solution
+p53 input = show.length $ filter (>limit) $ map combi $ perms
+    where
+    limit = read input :: Integer
+    factorials = 1 : map (\n -> product [1..n]) [1..]
+    combi (r, n) = factorials !! n `quot` (factorials !! r * factorials !! (n - r))
+    perms = [(n, x) | x <- [1..100], n <- [1..x]]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -536,6 +544,7 @@ solutions = Map.fromList [
    ( 50, (p50, return "1000000")),
    ( 51, (p51, return "6")),
    ( 52, (p52, return "6")),
+   ( 53, (p53, return "1000000")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
