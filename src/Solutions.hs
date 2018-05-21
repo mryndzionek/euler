@@ -127,7 +127,7 @@ p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)
     size = read input - 1 :: Int
     collatz n = takeWhile (> 1) (iterate next n) ++ [1]
     next x
-        | even x  = x `div` 2
+        | even x  = x `quot` 2
         | odd  x  = 3 * x + 1
         | otherwise = undefined
 
@@ -140,7 +140,7 @@ p16 input = show.sum $ map digitToInt $ show power
 p17 :: Solution
 p17 input = (show.length.concat) $ concatMap convert [1..size]
     where
-    size = read input - 1 :: Int
+    size = read input :: Int
     toTwenty = Map.fromList [(1, "one"),
         (2, "two"),
         (3, "three"),
@@ -172,9 +172,9 @@ p17 input = (show.length.concat) $ concatMap convert [1..size]
     decompose n
         | n == 0                        = Nothing
         | n < 20                        = (,) <$> stitch [Map.lookup n toTwenty] <*> pure 0
-        | n >= 20 && n < 100            = (,) <$> stitch [Map.lookup (n `div` 10) toHundred] <*> pure ( n `rem` 10)
-        | n < 1000 && n `mod` 100 == 0  = (,) <$> stitch [Map.lookup (n `div` 100) toTwenty, Just "hundred"] <*> pure 0
-        | n > 100 && n <= 999           = (,) <$> stitch [Map.lookup (n `div` 100) toTwenty, Just "hundredand"] <*> pure ( n `rem` 100)
+        | n >= 20 && n < 100            = (,) <$> stitch [Map.lookup (n `quot` 10) toHundred] <*> pure ( n `rem` 10)
+        | n < 1000 && n `rem` 100 == 0  = (,) <$> stitch [Map.lookup (n `quot` 100) toTwenty, Just "hundred"] <*> pure 0
+        | n > 100 && n <= 999           = (,) <$> stitch [Map.lookup (n `quot` 100) toTwenty, Just "hundredand"] <*> pure ( n `rem` 100)
         | n == 1000                     = Just ("onethousand", 0)
         | otherwise                     = Nothing
     stitch l = concat <$> sequence l
@@ -205,7 +205,7 @@ p19 input = (show.length) $ filter (==(7, 1)) wd_pairs
     leap_year = january ++ leap_february ++ rest_months
     calendar y = mult lc leap_year ++ mult (y - 1 - lc) year
         where
-        lc = (y - 1) `div` 4
+        lc = (y - 1) `quot` 4
 
 p20 :: Solution
 p20 input = show.sum $ map digitToInt $ (show.product) [1..size]
@@ -250,7 +250,7 @@ p26 :: Solution
 p26 input = show.snd.maximum $ zip recuring ([1..] :: [Int])
     where
     limit = read input :: Int
-    recur n = unfoldr (\a -> Just (a `mod` n, 10 * (a `mod` n))) 10
+    recur n = unfoldr (\a -> Just (a `rem` n, 10 * (a `rem` n))) 10
     recuring = [length.Set.fromList $ take limit $ recur n | n <- [1..limit]] :: [Int]
 
 p27 :: Solution
@@ -263,7 +263,7 @@ p28 :: Solution
 p28 input = show.sum.concat $ diagonals
     where
     size = read input :: Integer
-    maxLevel = (size - 1) `div` 2
+    maxLevel = (size - 1) `quot` 2
     diagonals = [1] : [take 4 $ iterate (\x -> x - 2 * l) s |
                        l <- [1..maxLevel], let a = 2 * l + 1,
                                            let s = a * a] :: [[Integer]]
@@ -298,7 +298,7 @@ p32 input = show.sum.nub $ map (uncurry (*)) candidates
     where
     limit = read input :: Int
     candidates = filter (\(n,m) -> isPandigit $ toStr (n, m))
-                 [(n, m) | n <- [1..limit - 1], m <- [1..limit `div` n]] :: [(Int, Int)]
+                 [(n, m) | n <- [1..limit - 1], m <- [1..limit `quot` n]] :: [(Int, Int)]
     toStr (n, m) = show n ++ show m ++ show (m*n)
     isPandigit n = let m = filter (/= '0') n in
                            (length m == 9) && length m == length (Set.fromList m)
@@ -366,11 +366,11 @@ p39 :: Solution
 p39 input = (show.snd.maximum) [(length $ triplets p, p) | p <- [2..limit]]
     where
     limit = read input :: Int
-    triplets p = [(a, b, c) | a <- [2..p `div` 3],
-                            let b = p * (p - 2 * a) `div` (2 * (p - a)),
+    triplets p = [(a, b, c) | a <- [2..p `quot` 3],
+                            let b = p * (p - 2 * a) `quot` (2 * (p - a)),
                             let c = p - a - b,
                             b > a,
-                            p * (p - 2 * a) `mod` (2 * (p - a)) == 0]
+                            p * (p - 2 * a) `rem` (2 * (p - a)) == 0]
 
 p40 :: Solution
 p40 input = (show.product) [d (10^a) | a <- [0..limit]]
@@ -387,7 +387,7 @@ p42 :: Solution
 p42 input = show.length $ filter (`Set.member` triangles) scores
     where
     scores = map wordToNum names
-    triangles = Set.fromList $ takeWhile (<=maximum scores) [n * (n + 1) `div` 2 | n <- [1..]]
+    triangles = Set.fromList $ takeWhile (<=maximum scores) [n * (n + 1) `quot` 2 | n <- [1..]]
     wordToNum w = sum $ map (\x -> ord x - 64) w
     strip = dropWhileEnd (=='"') . dropWhile (=='"')
     names = map strip $ splitOn "," $ concat $ lines input
@@ -403,7 +403,7 @@ p44 :: Solution
 p44 _ = show.head $ candidates
     where
     pentagonals = [(n*(3*n - 1)) `quot` 2 | n <- [1..]]
-    isPentagonal n = v == fromInteger (round v) && (round v `mod` 6 :: Int) == 0
+    isPentagonal n = v == fromInteger (round v) && (round v `rem` 6 :: Int) == 0
         where
         v = isqrt (1 + 24 * n) + 1
         isqrt = (sqrt . fromIntegral) :: Int -> Double
@@ -414,12 +414,12 @@ p45 :: Solution
 p45 input = show.head $ [t | t <- triangles, isPentagonal t, isHexagonal t]
     where
     start = read input :: Int
-    triangles = [n * (n + 1) `div` 2 | n <- [start..]]
+    triangles = [n * (n + 1) `quot` 2 | n <- [start..]]
     isqrt = (sqrt . fromIntegral) :: Int -> Double
-    isPentagonal n = v == fromInteger (round v) && (round v `mod` 6 :: Int) == 0
+    isPentagonal n = v == fromInteger (round v) && (round v `rem` 6 :: Int) == 0
         where
         v = isqrt (1 + 24 * n) + 1
-    isHexagonal n = v == fromInteger (round v) && (round v `mod` 4 :: Int) == 0
+    isHexagonal n = v == fromInteger (round v) && (round v `rem` 4 :: Int) == 0
         where
         v = isqrt (1 + 8 * n) + 1
 
@@ -444,7 +444,7 @@ p47 input = get' $ filter check [map facts [a..a + len - 1] | a <- [0..]]
 p48 :: Solution
 p48 input = show.last10digits $ sum [n ^ n | n <- [1..limit]]
     where
-    last10digits n = n `mod` (10^(10 :: Integer))
+    last10digits n = n `rem` (10^(10 :: Integer))
     limit = read input :: Integer
 
 p49 :: Solution
@@ -465,6 +465,15 @@ p50 input = show.maximum $ filter (isprime.snd) $ concatMap gen [take n sums | n
     gen n = zip [length n, length n - 1..] (map (last n -) (0:n))
     sums = takeWhile (<limit) cumul
     cumul = scanl1 (+) primes
+
+p52 :: Solution
+p52 input = show.head $ do
+    n <- [1..] :: [Int]
+    let candidates = map (show.(*) n) [1..upTo]
+    guard $ all (== Set.fromList (head candidates)) $ map Set.fromList (tail candidates)
+    return n
+        where
+         upTo = read input :: Int
 
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
@@ -519,6 +528,7 @@ solutions = Map.fromList [
    ( 49, (p49, return "")),
    ( 50, (p50, return "1000000")),
    ( 51, (p51, return "6")),
+   ( 52, (p52, return "6")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
