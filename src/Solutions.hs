@@ -67,7 +67,7 @@ p6 input = show $ (s * s) - sum [x*x | x <- [1..size]]
     s = sum [1..100]
 
 p7 :: Solution
-p7 input = show $ (primes !! upper :: Integer)
+p7 input = show (primes !! upper :: Integer)
     where
     upper = read input - 1 :: Int
 
@@ -346,7 +346,7 @@ p36 input = show.sum $ filter f [1..limit]
 
 
 p37 :: Solution
-p37 _ = show.sum $ take 11 $ dropWhile (<8) $ (filter isTrunc primes :: [Integer])
+p37 _ = show.sum $ take 11 $ dropWhile (<8) (filter isTrunc primes :: [Integer])
     where
     isTruncLeft s = all (isPrime :: Integer -> Bool) $ take l $ map read $ iterate (drop 1) s
         where
@@ -483,7 +483,7 @@ p52 input = show.head $ do
          upTo = read input :: Int
 
 p53 :: Solution
-p53 input = show.length $ filter (>limit) $ map combi $ perms
+p53 input = show.length $ filter (>limit) $ map combi perms
     where
     limit = read input :: Integer
     factorials = 1 : map (\n -> product [1..n]) [1..]
