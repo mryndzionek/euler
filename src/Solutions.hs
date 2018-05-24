@@ -513,6 +513,15 @@ p57 input = show . length $ filter isLonger $ take limit expansion
     isLonger n = length (show $ numerator n) > length (show $ denominator n)
     expansion = iterate (\x -> 1 + 1 / (1 + x)) 1
 
+p58 :: Solution
+p58 input = show.fst.head $ dropWhile ((>ratio).snd) $ zip ([3,5..] :: [Integer]) $ zipWith (%) prime (5 : [9,13..])
+    where
+    ratio = read input % 100 :: Ratio Int
+    diagonals = [take 4 $ iterate (\x -> x - 2 * l) s |
+                       l <- [1..], let a = 2 * l + 1,
+                                   let s = a * a] :: [[Integer]]
+    prime = drop 1 $ scanl (\x y -> x + length (filter isPrime y)) 0 diagonals
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -572,6 +581,7 @@ solutions = Map.fromList [
    ( 55, (p55, return "9999")),
    ( 56, (p56, return "99")),
    ( 57, (p57, return "1000")),
+   ( 58, (p58, return "10")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
