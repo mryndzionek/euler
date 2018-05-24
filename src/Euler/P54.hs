@@ -1,13 +1,18 @@
 module Euler.P54 (p54) where
 
 import Euler.Util
-import Data.Char
 import Data.List
+import Data.Maybe
 import Data.List.Split
 import qualified Data.Set as Set
+import qualified Data.Map.Strict as Map
+
+data Rank a = HighCard a | OnePair a | TwoPairs a |
+              ThreeOfAKind a | Straight a | Flush a |
+              FullHouse a | FourOfAKind a | StraightFlush a | RoyalFlush a deriving (Show, Eq, Ord)
 
 p54 :: Solution
-p54 input = show.length $ filter (uncurry compare') hands
+p54 input = show.length $ filter (\(p1, p2) -> score p1 > score p2) hands
     where
         hands =   map
                     ((\ (p1, p2) -> ((values p1, suits p1), (values p2, suits p2))) .
@@ -17,14 +22,9 @@ p54 input = show.length $ filter (uncurry compare') hands
         suits  = map (!! 1) :: [String] -> String
 
 trans :: Char -> Char
-trans a
-    | a <= '9' = a
-    | a == 'T' = 'A'
-    | a == 'J' = 'B'
-    | a == 'Q' = 'C'
-    | a == 'K' = 'D'
-    | a == 'A' = 'E'
-    | otherwise = undefined   
+trans a = fromMaybe a (Map.lookup a m)
+    where
+        m = Map.fromList [('T', 'A'), ('J', 'B'), ('Q', 'C'), ('K', 'D'), ('A', 'E')]   
  
 is :: String -> String -> Bool
 is a b = Set.fromList a == Set.fromList b
@@ -37,44 +37,25 @@ consecutive a = sort' a `isInfixOf` "23456789ABCDE"
     where
         sort' b = sort $ map trans b
 
-score :: String -> [Int]
-score values = sortBy (flip compare) (map (ord . trans) values)
-
 same :: String -> Int -> Bool
 same a n = Set.member n $ Set.fromList $ map snd $ count a
 
 twoPairs :: String -> Bool
 twoPairs a = ([1, 2, 2] :: [Int]) == sort (map snd $ count a)
 
-rank' :: (String, String) -> Int
-rank' (values, suits)
-    | values `is` "TJQKA" && isSame suits = 9
-    | consecutive values && isSame suits  = 8
-    | same values 4                       = 7
-    | same values 3 && same values 2      = 6
-    | isSame suits                        = 5
-    | consecutive values                  = 4
-    | same values 3                       = 3
-    | twoPairs values                     = 2
-    | same values 2                       = 1
-    | otherwise                           = 0
-
-filter' :: Int -> (String, String) -> String
-filter' rank (values, _)
-    | rank == 7 = flt values 4
-    | rank == 3 = flt values 3
-    | rank == 1 = flt values 2
-    | rank == 2 = flt values 2
-    | rank == 6 = flt values 2 ++ flt values 3
-    | otherwise = values
+score :: (String, String) -> Rank String
+score (values, suits)
+    | values `is` "TJQKA" && isSame suits = RoyalFlush values'
+    | consecutive values && isSame suits  = StraightFlush values'
+    | same values 4                       = FourOfAKind (flt values' 4)
+    | same values 3 && same values 2      = FullHouse (flt values' 2 ++ flt values' 3)
+    | isSame suits                        = Flush values'
+    | consecutive values                  = Straight values'
+    | same values 3                       = ThreeOfAKind (flt values' 4)
+    | twoPairs values                     = TwoPairs (flt values' 2)
+    | same values 2                       = OnePair (flt values' 2)
+    | otherwise                           = HighCard values'
         where
             flt :: String -> Int -> String
             flt v c = map fst $ filter (\a -> snd a == c) $ count v
-
-compare' :: (String, String) -> (String, String) -> Bool
-compare' p1 p2
-    | r1 == r2 = score (filter' r1 p1) > score (filter' r2 p2)
-    | otherwise = r1 > r2
-    where
-        r1 = rank' p1
-        r2 = rank' p2
+            values' = sortBy (flip compare) (map trans values)
