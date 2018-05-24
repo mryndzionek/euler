@@ -491,6 +491,28 @@ p53 input = show.length $ filter (>limit) $ map combi perms
     combi (r, n) = factorials !! n `quot` (factorials !! r * factorials !! (n - r))
     perms = [(n, x) | x <- [1..100], n <- [1..x]]
 
+p55 :: Solution
+p55 input = show.length $ filter (not . any isPalindr . candidates) [1..limit]
+    where
+    limit = read input :: Integer
+    rev = read . reverse . show
+    isPalindr n = n == rev n
+    candidates n = take 50 . drop 1 $ iterate (\x -> x + rev x) n
+
+p56 :: Solution
+p56 input = show . maximum $ map digitSum [a ^ b | a <- [1..limit], b <- [1..limit]]
+    where
+    limit = read input :: Integer
+    digitSum = sum . map digitToInt . show
+
+p57 :: Solution
+p57 input = show . length $ filter isLonger $ take limit expansion
+    where
+    limit = read input :: Int
+    isLonger :: Ratio Integer -> Bool
+    isLonger n = length (show $ numerator n) > length (show $ denominator n)
+    expansion = iterate (\x -> 1 + 1 / (1 + x)) 1
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -547,6 +569,9 @@ solutions = Map.fromList [
    ( 52, (p52, return "6")),
    ( 53, (p53, return "1000000")),
    ( 54, (p54, readFile "inputs/p54.txt")),
+   ( 55, (p55, return "9999")),
+   ( 56, (p56, return "99")),
+   ( 57, (p57, return "1000")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
