@@ -4,6 +4,8 @@ import Numeric
 import Data.Char
 import Data.List
 import Data.Ratio
+import Data.Tuple
+import Data.Bits
 import qualified Data.Permute as Per
 import Data.List.Split
 import qualified Data.Map.Strict as Map
@@ -522,6 +524,16 @@ p58 input = show.fst.head $ dropWhile ((>ratio).snd) $ zip ([3,5..] :: [Integer]
                                    let s = a * a] :: [[Integer]]
     prime = drop 1 $ scanl (\x y -> x + length (filter isPrime y)) 0 diagonals
 
+p59 :: Solution
+
+p59 input = show $ sum $ zipWith xor ciphertxt (cycle key)
+    where
+    ciphertxt = map read $ splitOn "," input
+    chunks = transpose $ chunksOf 3 ciphertxt
+    maxCount :: [Int] -> (Integer, Int)
+    maxCount x = maximum $ map swap $ count x
+    key = map ((xor (ord ' ') . snd) . maxCount) chunks
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -582,6 +594,7 @@ solutions = Map.fromList [
    ( 56, (p56, return "99")),
    ( 57, (p57, return "1000")),
    ( 58, (p58, return "10")),
+   ( 59, (p59, readFile "inputs/p59.txt")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
