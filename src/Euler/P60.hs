@@ -1,7 +1,6 @@
 module Euler.P60 (p60) where
 
 import Euler.Util
-import Control.Monad
 import Control.Monad.State
 import Data.Numbers.Primes
 

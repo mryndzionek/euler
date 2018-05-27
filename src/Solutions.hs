@@ -25,6 +25,7 @@ import Euler.P15
 import Euler.P51
 import Euler.P54
 import Euler.P60
+import Euler.P61
 import Euler.Util
 
 p1 :: Solution
@@ -526,7 +527,6 @@ p58 input = show.fst.head $ dropWhile ((>ratio).snd) $ zip ([3,5..] :: [Integer]
     prime = drop 1 $ scanl (\x y -> x + length (filter isPrime y)) 0 diagonals
 
 p59 :: Solution
-
 p59 input = show $ sum $ zipWith xor ciphertxt (cycle key)
     where
     ciphertxt = map read $ splitOn "," input
@@ -597,6 +597,7 @@ solutions = Map.fromList [
    ( 58, (p58, return "10")),
    ( 59, (p59, readFile "inputs/p59.txt")),
    ( 60, (p60, return "10000")),
+   ( 61, (p61, return "9999")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String

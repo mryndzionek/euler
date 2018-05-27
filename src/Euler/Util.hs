@@ -1,9 +1,19 @@
-module Euler.Util where
+module Euler.Util (
+    Solution,
+    pfactors,
+    divisors,
+    fibs,
+    safeLu,
+    count,
+    combinations,
+    printSolution
+) where
 
 import Data.List
 import qualified Data.Map.Strict as Map
 import System.TimeIt
 import Data.Numbers.Primes
+import Control.Monad.State
 
 type Solution = String -> String
 
@@ -37,6 +47,12 @@ count a = Map.toList $ foldr f Map.empty a
     f k m = case Map.lookup k m of
         Nothing -> Map.insert k 1 m
         Just _  -> Map.adjust (+1) k m
+
+choose :: Eq a => StateT [a] [] a
+choose = StateT (\s -> s >>= \v -> return (v, delete v s))
+
+combinations :: Eq a => Int -> [a] -> [[a]]
+combinations n = evalStateT (replicateM n choose)
 
 printSolution :: (Int, Solution, IO String) -> IO ()
 printSolution (number, problem, input) = do
