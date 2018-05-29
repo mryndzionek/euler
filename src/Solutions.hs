@@ -536,6 +536,24 @@ p59 input = show $ sum $ zipWith xor ciphertxt (cycle key)
     maxCount x = maximum $ map swap $ count x
     key = map ((xor (ord ' ') . snd) . maxCount) chunks
 
+p63 :: Solution
+p63 _ = show . sum $ ([floor(1 / ((1 :: Double) - logBase 10 n)) | n <- [1..9]] :: [Integer])
+
+p64 :: Solution
+p64 input = show . length $ filter odd $ map (subtract 1 . length . compute) [2..limit]
+    where
+    limit = read input :: Integer
+    compute n = evalState (cont (n, 0, 1)) []
+    cont :: (Integer, Integer, Integer) -> State [Integer] [Integer]
+    cont (r, n, d)
+        | d == 0 = get
+        | d == 1 && n /= 0 = update >> get
+        | otherwise = update >> cont (r, -a, (r - a ^ (2 :: Integer)) `div` d)
+        where
+            m = (truncate (sqrt (fromIntegral r) :: Double) + n) `div` d
+            a = n - d * m
+            update = modify $ \s -> s ++ [m]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -600,6 +618,8 @@ solutions = Map.fromList [
    ( 60, (p60, return "10000")),
    ( 61, (p61, return "9999")),
    ( 62, (p62, return "")),
+   ( 63, (p63, return "")),
+   ( 64, (p64, return "10000")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
