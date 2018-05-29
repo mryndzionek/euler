@@ -16,7 +16,7 @@ p61 input = show.sum.head $ do
     guard $ matches [p3, p4, p5, p6] p7
     p8 <- gen (\n -> n * (3 * n - 2))
     guard $ matches [p3, p4, p5, p6, p7] p8
-    p <- filter match (combinations 6 [p3, p4, p5, p6, p7, p8])
+    p <- filter match (nPerms 6 [p3, p4, p5, p6, p7, p8])
     guard $ cyclic p
     return p
     where

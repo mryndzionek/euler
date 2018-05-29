@@ -5,7 +5,7 @@ module Euler.Util (
     fibs,
     safeLu,
     count,
-    combinations,
+    nPerms,
     printSolution
 ) where
 
@@ -51,8 +51,8 @@ count a = Map.toList $ foldr f Map.empty a
 choose :: Eq a => StateT [a] [] a
 choose = StateT (\s -> s >>= \v -> return (v, delete v s))
 
-combinations :: Eq a => Int -> [a] -> [[a]]
-combinations n = evalStateT (replicateM n choose)
+nPerms :: Eq a => Int -> [a] -> [[a]]
+nPerms n = evalStateT (replicateM n choose)
 
 printSolution :: (Int, Solution, IO String) -> IO ()
 printSolution (number, problem, input) = do
