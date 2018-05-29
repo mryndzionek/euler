@@ -554,6 +554,16 @@ p64 input = show . length $ filter odd $ map (subtract 1 . length . compute) [2.
             a = n - d * m
             update = modify $ \s -> s ++ [m]
 
+p65 :: Solution
+p65 input = show.sum $ map digitToInt.show.numerator.fraction $ take limit e
+    where
+        limit = read input :: Int
+        e = [2, 1] ++ concat [[n, 1, 1] | n <- [2,4..] :: [Integer]]
+        fraction = foldr cont 0
+        cont x 0 = x % 1
+        cont x y = (x % 1) + (1 / y)
+
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -620,6 +630,7 @@ solutions = Map.fromList [
    ( 62, (p62, return "")),
    ( 63, (p63, return "")),
    ( 64, (p64, return "10000")),
+   ( 65, (p65, return "100")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
