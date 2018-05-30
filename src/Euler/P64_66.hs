@@ -1,4 +1,4 @@
-module Euler.P64_66 (p64, p65) where
+module Euler.P64_66 (p64, p65, p66) where
 
 import Euler.Util
 import Data.Char
@@ -34,4 +34,23 @@ p65 input = show.sum $ map digitToInt.show.numerator.evalFraction $ take limit e
     where
         limit = read input :: Int
         e = [2, 1] ++ concat [[n, 1, 1] | n <- [2,4..] :: [Integer]]
+
+p66 :: Solution
+p66 input = show.snd.maximum $ zip (map findX candidates) candidates
+    where
+        limit = read input :: Integer
+        candidates = filter (not . isPerfectSquare) ([2..limit] :: [Integer])
+        isPerfectSquare val = val == sqrf * sqrf
+            where
+                sqrf = floor ((sqrt.fromIntegral) val :: Double)
+        findX d = numerator.head $ filter isSolution (approx d)
+            where
+                isSolution x = a*a - d*b*b == 1
+                    where
+                        a = numerator x
+                        b = denominator x
+        approx root = [evalFraction (take x terms) | x <- [1..]]
+            where
+                as = compute root
+                terms = head as : cycle (tail as)
 

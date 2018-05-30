@@ -607,6 +607,7 @@ solutions = Map.fromList [
    ( 63, (p63, return "")),
    ( 64, (p64, return "10000")),
    ( 65, (p65, return "100")),
+   ( 66, (p66, return "1000")),
    ( 67, (p18, readFile "inputs/p67.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
