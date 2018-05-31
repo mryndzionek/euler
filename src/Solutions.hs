@@ -546,6 +546,19 @@ p69 input = show . last $ takeWhile (<limit) $ map product [take n primes | n <-
     where
         limit = read input :: Integer
 
+p70 :: Solution
+p70 input = show . snd $ minimum ([(divi n phi, n) | (n, phi) <- candidates, perm n phi] :: [(Double, Integer)])
+    where
+        limit = read input :: Integer
+        divi a b = fromIntegral a / fromIntegral b
+        perm x y = sort (show x) == sort (show y)
+        totient p_1 p_2 = (p_1 - 1) * (p_2 - 1)
+        candidates = [(n, phi) | p_1 <- ps, p_2 <- dropWhile (<= p_1) ps,
+                                 let n = p_1 * p_2, n <= limit,
+                                 let phi = totient p_1 p_2]
+            where ps = takeWhile (<=2 * pl) primes
+                  pl = head $ dropWhile ((<=limit) . (^(2 :: Integer))) primes
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -616,7 +629,8 @@ solutions = Map.fromList [
    ( 66, (p66, return "1000")),
    ( 67, (p18, readFile "inputs/p67.txt")),
    ( 68, (p68, return "")),
-   ( 69, (p69, return "1000000"))]
+   ( 69, (p69, return "1000000")),
+   ( 70, (p70, return "10000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
