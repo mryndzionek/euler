@@ -541,6 +541,11 @@ p59 input = show $ sum $ zipWith xor ciphertxt (cycle key)
 p63 :: Solution
 p63 _ = show . sum $ ([floor(1 / ((1 :: Double) - logBase 10 n)) | n <- [1..9]] :: [Integer])
 
+p69 :: Solution
+p69 input = show . last $ takeWhile (<limit) $ map product [take n primes | n <- [1..]]
+    where
+        limit = read input :: Integer
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -610,7 +615,8 @@ solutions = Map.fromList [
    ( 65, (p65, return "100")),
    ( 66, (p66, return "1000")),
    ( 67, (p18, readFile "inputs/p67.txt")),
-   ( 68, (p68, return ""))]
+   ( 68, (p68, return "")),
+   ( 69, (p69, return "1000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
