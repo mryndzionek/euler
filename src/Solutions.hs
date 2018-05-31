@@ -28,6 +28,7 @@ import Euler.P60
 import Euler.P61
 import Euler.P62
 import Euler.P64_66
+import Euler.P68
 import Euler.Util
 
 p1 :: Solution
@@ -608,7 +609,8 @@ solutions = Map.fromList [
    ( 64, (p64, return "10000")),
    ( 65, (p65, return "100")),
    ( 66, (p66, return "1000")),
-   ( 67, (p18, readFile "inputs/p67.txt"))]
+   ( 67, (p18, readFile "inputs/p67.txt")),
+   ( 68, (p68, return ""))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
