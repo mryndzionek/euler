@@ -559,6 +559,13 @@ p70 input = show . snd $ minimum ([(divi n phi, n) | (n, phi) <- candidates, per
             where ps = takeWhile (<=2 * pl) primes
                   pl = head $ dropWhile ((<=limit) . (^(2 :: Integer))) primes
 
+p71 :: Solution
+p71 input = show . fst $ until (\(x, y) -> denominator (mediant x y) > limit) farey (0, 1)
+    where
+    limit = read input :: Integer
+    farey (a, b) = let m = mediant a b in if m < (3 % 7) then (m, b) else (a, m)
+    mediant a b = (numerator a + numerator b) % (denominator a + denominator b)
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -630,7 +637,8 @@ solutions = Map.fromList [
    ( 67, (p18, readFile "inputs/p67.txt")),
    ( 68, (p68, return "")),
    ( 69, (p69, return "1000000")),
-   ( 70, (p70, return "10000000"))]
+   ( 70, (p70, return "10000000")),
+   ( 71, (p71, return "1000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
