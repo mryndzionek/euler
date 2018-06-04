@@ -566,6 +566,14 @@ p71 input = show . fst $ until (\(x, y) -> denominator (mediant x y) > limit) fa
     farey (a, b) = let m = mediant a b in if m < (3 % 7) then (m, b) else (a, m)
     mediant a b = (numerator a + numerator b) % (denominator a + denominator b)
 
+p72 :: Solution
+p72 input = show $ fareySum limit - 2
+    where
+    limit = read input :: Int
+    fareySum m = map f [0..] !! m
+        where
+        f n = (n*(n + 3)) `quot` 2 - sum [fareySum (n `quot` k) | k <- [2..n]]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -638,7 +646,8 @@ solutions = Map.fromList [
    ( 68, (p68, return "")),
    ( 69, (p69, return "1000000")),
    ( 70, (p70, return "10000000")),
-   ( 71, (p71, return "1000000"))]
+   ( 71, (p71, return "1000000")),
+   ( 72, (p72, return "1000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
