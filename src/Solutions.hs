@@ -574,8 +574,38 @@ p72 input = show $ fareySum limit - 2
         where
         f n = (n*(n + 3)) `quot` 2 - sum [fareySum (n `quot` k) | k <- [2..n]]
 
+p73 :: Solution
+p73 input = show . length $ farey limit
+    where
+    limit = read input :: Int
+    farey l = drop 1 $ iFarey (1 % 3, 1 % 2)
+        where
+        iFarey (a, b)
+            | denominator mediant > l = [a]
+            | otherwise = iFarey (a, mediant) ++ iFarey (mediant, b)
+            where
+            mediant = (numerator a + numerator b) % (denominator a + denominator b)
+
+
+p74 :: Solution
+p74 input = show . length $ filter (==60) $ map (length . chain) [1..limit]
+    where
+    limit = read input :: Int
+    facSum n = sum $ map ((factorials !!) . digitToInt) $ show n
+    factorial m = product [1..m]
+    factorials = map factorial [0..9]
+    chain :: Int -> [Int]
+    chain n = evalState (build n) []
+        where
+        build :: Int -> State [Int] [Int]
+        build m = do
+            s <- get
+            if m `elem` s then return s else
+                modify (\ s' -> m : s') >> build (facSum m)
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
+    
    (  1, ( p1, return"1000")),
    (  2, ( p2, return"4000000")),
    (  3, ( p3, return"600851475143")),
@@ -647,7 +677,9 @@ solutions = Map.fromList [
    ( 69, (p69, return "1000000")),
    ( 70, (p70, return "10000000")),
    ( 71, (p71, return "1000000")),
-   ( 72, (p72, return "1000000"))]
+   ( 72, (p72, return "1000000")),
+   ( 73, (p73, return "12000")),
+   ( 74, (p74, return "999999"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
