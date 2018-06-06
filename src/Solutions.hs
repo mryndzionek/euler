@@ -603,6 +603,21 @@ p74 input = show . length $ filter (==60) $ map (length . chain) [1..limit]
             if m `elem` s then return s else
                 modify (\ s' -> m : s') >> build (facSum m)
 
+p75 :: Solution
+p75 input = show . length $ filter ((==(1 :: Integer)) . snd) $ count $ do
+    let mlimit = floor $ sqrt ((fromIntegral limit :: Double) / 2) :: Integer
+    m <- [2..mlimit]
+    n <- [1..m]
+    guard $ (m + n) `rem` 2 == 1
+    guard $ gcd n m == 1
+    let triplet = [(m ^ (2 :: Integer)) - (n ^ (2 :: Integer)),
+                   2 * m * n,
+                   (m ^ (2 :: Integer)) + (n ^ (2 :: Integer))]
+    let s = sum triplet
+    [s * i | i <- [1..limit `quot` s]]
+        where
+        limit = read input :: Integer
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
     
@@ -679,7 +694,8 @@ solutions = Map.fromList [
    ( 71, (p71, return "1000000")),
    ( 72, (p72, return "1000000")),
    ( 73, (p73, return "12000")),
-   ( 74, (p74, return "999999"))]
+   ( 74, (p74, return "999999")),
+   ( 75, (p75, return "1500000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
