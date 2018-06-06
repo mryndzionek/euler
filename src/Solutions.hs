@@ -298,12 +298,12 @@ p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
 -- and it is the first instance of solution that is a lot less elegant than
 -- the original imperative version :(
 
-p31 :: Solution
-p31 input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
+p31 :: [Int] -> Solution
+p31 coins input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
     where
     amount = read input :: Int
     repl n a = take (length a) [take (length a) $ replicate i 0 ++ a | i <- [0,n..]]
-    repls = map repl [1, 2, 5, 10, 20, 50, 100, 200]
+    repls = map repl coins
     start = 1 : replicate amount 0 :: [Integer]
 
 p32 :: Solution
@@ -651,7 +651,7 @@ solutions = Map.fromList [
    ( 28, (p28, return "1001")),
    ( 29, (p29, return "100")),
    ( 30, (p30, return "5")),
-   ( 31, (p31, return "200")),
+   ( 31, (p31 [1, 2, 5, 10, 20, 50, 100, 200], return "200")),
    ( 32, (p32, return "10000")),
    ( 33, (p33, return "")),
    ( 34, (p34, return "")),
@@ -695,7 +695,8 @@ solutions = Map.fromList [
    ( 72, (p72, return "1000000")),
    ( 73, (p73, return "12000")),
    ( 74, (p74, return "999999")),
-   ( 75, (p75, return "1500000"))]
+   ( 75, (p75, return "1500000")),
+   ( 76, (p31 [1..99], return "100"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
