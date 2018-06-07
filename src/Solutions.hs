@@ -614,6 +614,12 @@ p75 input = show . length $ filter ((==(1 :: Integer)) . snd) $ count $ do
         where
         limit = read input :: Integer
 
+p77 :: Solution
+p77 input = show . head $ dropWhile ((< limit) . read . snd) candidates
+    where
+    candidates = [(last p, p31 p (show (last p))) | n <- [1..], let p = take n primes]
+    limit = read input :: Integer
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
     
@@ -692,7 +698,8 @@ solutions = Map.fromList [
    ( 73, (p73, return "12000")),
    ( 74, (p74, return "999999")),
    ( 75, (p75, return "1500000")),
-   ( 76, (p31 [1..99], return "100"))]
+   ( 76, (p31 [1..99], return "100")),
+   ( 77, (p77, return "5000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
