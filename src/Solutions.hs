@@ -622,7 +622,6 @@ p77 input = show . head $ dropWhile ((< limit) . read . snd) candidates
 
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
-    
    (  1, ( p1, return"1000")),
    (  2, ( p2, return"4000000")),
    (  3, ( p3, return"600851475143")),
