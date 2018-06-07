@@ -294,17 +294,13 @@ p30 input = show.sum $ filter (\n -> n == digPow n) [2..limit]
     digPow = sum . map ((^powers) . toInteger . digitToInt) . show
     numDigits n = length $ show (9^powers*n)
 
--- Solution to problem 31 emulates the imperative dynamic programming solution
--- and it is the first instance of solution that is a lot less elegant than
--- the original imperative version :(
-
 p31 :: [Int] -> Solution
-p31 coins input = show.last $ foldl (\a b -> foldl1 (zipWith (+)) (b a)) start repls
+p31 coins input = show $ ways amount coins
     where
     amount = read input :: Int
-    repl n a = take (length a) [take (length a) $ replicate i 0 ++ a | i <- [0,n..]]
-    repls = map repl coins
-    start = 1 : replicate amount 0 :: [Integer]
+    ways :: Int -> [Int] -> Integer
+    ways n c = last . snd $ until (null . fst) way (c, 1 : replicate n 0)
+    way (c, s) = (drop 1 c, zipWith (+) s (replicate (head c) 0 ++ snd (way (c, s))))
 
 p32 :: Solution
 p32 input = show.sum.nub $ map (uncurry (*)) candidates
