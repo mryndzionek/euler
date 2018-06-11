@@ -36,7 +36,7 @@ executable solutions
   default-language:    Haskell2010
   build-depends:       base >= 4.7 && < 5,
                        containers, split, data-fix, safe, transformers,
-                       timeit, mtl, permutation, primes
+                       timeit, mtl, permutation, primes, array
   other-modules:       Euler.Util
                        Euler.P15
                        Euler.P51

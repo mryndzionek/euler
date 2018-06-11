@@ -3,6 +3,7 @@ module Main where
 import Numeric
 import Data.Char
 import Data.List
+import Data.Array
 import Data.Ratio
 import Data.Tuple
 import Data.Bits
@@ -620,6 +621,18 @@ p77 input = show . head $ dropWhile ((< limit) . read . snd) candidates
     candidates = [(last p, p31 p (show (last p))) | n <- [1..], let p = take n primes]
     limit = read input :: Integer
 
+p78 :: Solution
+p78 input = show . head $ [i | (i, p) <- assocs lut, p `rem` limit == 0]
+    where
+    limit = read input :: Integer
+    pentagonals = sort [n * (3 * n - 1) `quot` 2 | n <- [-250..250], n /= 0]
+    terms m = zip (cycle [1, 1, -1, -1]) (takeWhile (<= m) pentagonals)
+    lut :: Array Integer Integer
+    lut = array (0, limit) [(x, part x) | x <- [0..limit]]
+    part n | n <  0 = 0
+           | n == 0 = 1
+           | otherwise = sum [s * (lut ! (n - p)) | (s, p) <- terms n]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -698,7 +711,8 @@ solutions = Map.fromList [
    ( 74, (p74, return "999999")),
    ( 75, (p75, return "1500000")),
    ( 76, (p31 [1..99], return "100")),
-   ( 77, (p77, return "5000"))]
+   ( 77, (p77, return "5000")),
+   ( 78, (p78, return "1000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
