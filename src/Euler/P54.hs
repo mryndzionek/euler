@@ -7,9 +7,17 @@ import Data.List.Split
 import qualified Data.Set as Set
 import qualified Data.Map.Strict as Map
 
+data Value = Two   | Three | Four | Five | Six   | Seven |
+             Eight | Nine  | Ten  | Jack | Queen | King  | Ace deriving (Show, Eq, Ord, Enum)
+
 data Rank a = HighCard a | OnePair a | TwoPairs a |
-              ThreeOfAKind a | Straight a | Flush a |
-              FullHouse a | FourOfAKind a | StraightFlush a | RoyalFlush a deriving (Show, Eq, Ord)
+              ThreeOfAKind a | Straight a    | Flush a         |
+              FullHouse a    | FourOfAKind a | StraightFlush a | RoyalFlush a deriving (Show, Eq, Ord)
+
+char2value :: Char -> Value
+char2value a = fromMaybe undefined (Map.lookup a m)
+    where
+    m = Map.fromList (zip "23456789TJQKA" [Two .. Ace])
 
 p54 :: Solution
 p54 input = show.length $ filter (\(p1, p2) -> score p1 > score p2) hands
@@ -18,34 +26,27 @@ p54 input = show.length $ filter (\(p1, p2) -> score p1 > score p2) hands
                     ((\ (p1, p2) -> ((values p1, suits p1), (values p2, suits p2))) .
                        (splitAt 5 . splitOn " "))
                     (lines input)
-        values = map (!! 0) :: [String] -> String
-        suits  = map (!! 1) :: [String] -> String
-
-trans :: Char -> Char
-trans a = fromMaybe a (Map.lookup a m)
-    where
-        m = Map.fromList [('T', 'A'), ('J', 'B'), ('Q', 'C'), ('K', 'D'), ('A', 'E')]   
+        values = map (char2value . (!! 0)) :: [String] -> [Value]
+        suits  = map (!! 1) :: [String] -> String  
  
-is :: String -> String -> Bool
+is :: [Value] -> [Value] -> Bool
 is a b = Set.fromList a == Set.fromList b
 
 isSame :: String -> Bool
 isSame a = all (== head a) (tail a)
 
-consecutive :: String -> Bool
-consecutive a = sort' a `isInfixOf` "23456789ABCDE"
-    where
-        sort' b = sort $ map trans b
+consecutive :: [Value] -> Bool
+consecutive a = sort a `isInfixOf` [Two .. Ace]
 
-same :: String -> Int -> Bool
+same :: [Value] -> Int -> Bool
 same a n = Set.member n $ Set.fromList $ map snd $ count a
 
-twoPairs :: String -> Bool
+twoPairs :: [Value] -> Bool
 twoPairs a = ([1, 2, 2] :: [Int]) == sort (map snd $ count a)
 
-score :: (String, String) -> Rank String
+score :: ([Value], String) -> Rank [Value]
 score (values, suits)
-    | values `is` "TJQKA" && isSame suits = RoyalFlush values'
+    | values `is` [Ten .. Ace] && isSame suits = RoyalFlush values'
     | consecutive values && isSame suits  = StraightFlush values'
     | same values 4                       = FourOfAKind (flt values' 4)
     | same values 3 && same values 2      = FullHouse (flt values' 2 ++ flt values' 3)
@@ -56,6 +57,6 @@ score (values, suits)
     | same values 2                       = OnePair (flt values' 2)
     | otherwise                           = HighCard values'
         where
-            flt :: String -> Int -> String
+            flt :: [Value] -> Int -> [Value]
             flt v c = map fst $ filter (\a -> snd a == c) $ count v
-            values' = sortBy (flip compare) (map trans values)
+            values' = sortBy (flip compare) values
