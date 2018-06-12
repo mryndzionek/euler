@@ -633,6 +633,17 @@ p78 input = show . head $ [i | (i, p) <- assocs lut, p `rem` limit == 0]
            | n == 0 = 1
            | otherwise = sum [s * (lut ! (n - p)) | (s, p) <- terms n]
 
+p79 :: Solution
+p79 keylog = concatMap (show . snd) $ sort' $ map (\(a, b) -> ((length . nub) b, a)) prec
+    where
+    attempts = map (map digitToInt ) $ lines keylog
+    prec  = Map.toList $ Map.fromListWith (++) $ concatMap assoc attempts
+    sort' = sortBy (flip compare)
+    assoc = unfoldr f
+        where   
+        f [] = Nothing
+        f (x:xs) = Just ((x, xs), xs)
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -712,7 +723,8 @@ solutions = Map.fromList [
    ( 75, (p75, return "1500000")),
    ( 76, (p31 [1..99], return "100")),
    ( 77, (p77, return "5000")),
-   ( 78, (p78, return "1000000"))]
+   ( 78, (p78, return "1000000")),
+   ( 79, (p79, readFile "inputs/p79.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
