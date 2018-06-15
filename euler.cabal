@@ -13,22 +13,6 @@ build-type:          Simple
 cabal-version:       >=1.10
 extra-source-files:  README.md
 
-library
-  hs-source-dirs:      src
-  exposed-modules:     Euler.Util
-                       Euler.P15
-                       Euler.P51
-                       Euler.P54
-                       Euler.P60
-                       Euler.P61
-                       Euler.P62
-                       Euler.P64_66
-                       Euler.P68
-  default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5,
-                       containers, data-fix, timeit, primes, split, mtl
-  ghc-options:         -Wall
-
 executable solutions
   hs-source-dirs:      src
   main-is:             Solutions.hs
