@@ -644,6 +644,19 @@ p79 keylog = concatMap (show . snd) $ sort' $ map (\(a, b) -> ((length . nub) b,
         f [] = Nothing
         f (x:xs) = Just ((x, xs), xs)
 
+p80 :: Solution
+p80 input = show.sum $ concatMap (sqrtDigits 99) [n | n <- [1..limit], not $ isSquare n]
+    where
+    limit = read input :: Integer
+    isSquare :: Integer -> Bool
+    isSquare n = let s = ((floor :: Double -> Integer).sqrt.fromIntegral) n in (s * s) == n
+    isqrt 0 = 0
+    isqrt 1 = 1
+    isqrt n = head $ dropWhile (\x -> x*x > n) $ iterate (\x -> (x + n `div` x) `div` 2) (n `div` 2)
+    digits = map digitToInt . show :: Integer -> [Int]
+    sqrtDigits :: Int -> Integer -> [Int]
+    sqrtDigits c x = digits $ isqrt $ x * (10 ^ (2 * c))
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -724,7 +737,8 @@ solutions = Map.fromList [
    ( 76, (p31 [1..99], return "100")),
    ( 77, (p77, return "5000")),
    ( 78, (p78, return "1000000")),
-   ( 79, (p79, readFile "inputs/p79.txt"))]
+   ( 79, (p79, readFile "inputs/p79.txt")),
+   ( 80, (p80, return "100"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
