@@ -2,7 +2,6 @@ module Euler.P54 (p54) where
 
 import Euler.Util
 import Data.List
-import Data.Maybe
 import Data.List.Split
 import qualified Data.Set as Set
 import qualified Data.Map.Strict as Map
@@ -14,19 +13,23 @@ data Rank a = HighCard a | OnePair a | TwoPairs a |
               ThreeOfAKind a | Straight a    | Flush a         |
               FullHouse a    | FourOfAKind a | StraightFlush a | RoyalFlush a deriving (Show, Eq, Ord)
 
-char2value :: Char -> Value
-char2value a = fromMaybe undefined (Map.lookup a m)
+char2value :: Char -> Maybe Value
+char2value a = Map.lookup a m
     where
     m = Map.fromList (zip "23456789TJQKA" [Two .. Ace])
 
 p54 :: Solution
-p54 input = show.length $ filter (\(p1, p2) -> score p1 > score p2) hands
+p54 input = case hands of
+                Just h  -> show.length $ filter (\(p1, p2) -> score p1 > score p2) h
+                Nothing -> "Wrong input format !!!"
     where
-        hands =   map
-                    ((\ (p1, p2) -> ((values p1, suits p1), (values p2, suits p2))) .
-                       (splitAt 5 . splitOn " "))
-                    (lines input)
-        values = map (char2value . (!! 0)) :: [String] -> [Value]
+        hands = mapM
+                    ((\ (p1, p2) ->
+                    do  v1 <- values p1
+                        v2 <- values p2
+                        return ((v1, suits p1), (v2, suits p2)))
+                        . (splitAt 5 . splitOn " ")) (lines input)
+        values = mapM (char2value . (!! 0)) :: [String] -> Maybe [Value]
         suits  = map (!! 1) :: [String] -> String  
  
 is :: [Value] -> [Value] -> Bool
