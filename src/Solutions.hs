@@ -666,9 +666,9 @@ p81 input = show.head $ foldr fld (scanr1 (+) $ last matrix) (init matrix)
 
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
-   (  1, ( p1, return"1000")),
-   (  2, ( p2, return"4000000")),
-   (  3, ( p3, return"600851475143")),
+   (  1, ( p1, return "1000")),
+   (  2, ( p2, return "4000000")),
+   (  3, ( p3, return "600851475143")),
    (  4, ( p4, return "3")),
    (  5, ( p5, return "20")),
    (  6, ( p6, return "100")),
