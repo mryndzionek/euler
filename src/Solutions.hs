@@ -657,6 +657,13 @@ p80 input = show.sum $ concatMap (sqrtDigits 99) [n | n <- [1..limit], not $ isS
     sqrtDigits :: Int -> Integer -> [Int]
     sqrtDigits c x = digits $ isqrt $ x * (10 ^ (2 * c))
 
+p81 :: Solution
+p81 input = show.head $ foldr fld (scanr1 (+) $ last matrix) (init matrix)
+        where
+        matrix = (map (map read . splitOn ",") . lines) input
+        fld :: [Integer] -> [Integer] -> [Integer]
+        fld cur prev = init $ scanr (\(p, c) a -> c + min a p) (last prev) (zip prev cur)
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return"1000")),
@@ -738,7 +745,8 @@ solutions = Map.fromList [
    ( 77, (p77, return "5000")),
    ( 78, (p78, return "1000000")),
    ( 79, (p79, readFile "inputs/p79.txt")),
-   ( 80, (p80, return "100"))]
+   ( 80, (p80, return "100")),
+   ( 81, (p81, readFile "inputs/p81.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
