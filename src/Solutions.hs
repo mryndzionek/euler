@@ -664,6 +664,17 @@ p81 input = show.head $ foldr fld (scanr1 (+) $ last matrix) (init matrix)
         fld :: [Integer] -> [Integer] -> [Integer]
         fld cur prev = init $ scanr (\(p, c) a -> c + min a p) (last prev) (zip prev cur)
 
+p82 :: Solution
+p82 input = show.minimum $ foldr1 fld1 matrix
+        where
+        matrix = transpose $ (map (map read . splitOn ",") . lines) input
+        fld1 :: [Integer] -> [Integer] -> [Integer]
+        fld1 c p = let x = fld c p
+                       y = fld (reverse c) (reverse p)
+                    in zipWith min x (reverse y)
+        fld :: [Integer] -> [Integer] -> [Integer]
+        fld c' p' = tail $ scanl (\a (p, c) -> c + min a p) (head p') (zip p' c')
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -746,7 +757,8 @@ solutions = Map.fromList [
    ( 78, (p78, return "1000000")),
    ( 79, (p79, readFile "inputs/p79.txt")),
    ( 80, (p80, return "100")),
-   ( 81, (p81, readFile "inputs/p81.txt"))]
+   ( 81, (p81, readFile "inputs/p81.txt")),
+   ( 82, (p82, readFile "inputs/p82.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
