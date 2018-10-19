@@ -21,6 +21,7 @@ executable solutions
   build-depends:       base >= 4.7 && < 5,
                        containers, split, data-fix, safe, transformers,
                        timeit, mtl, permutation, primes, array, astar,
+                       random,
                        unordered-containers
   other-modules:       Euler.Util
                        Euler.P15
@@ -32,3 +33,4 @@ executable solutions
                        Euler.P64_66
                        Euler.P68
                        Euler.P83
+                       Euler.P84
