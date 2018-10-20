@@ -17,10 +17,10 @@ board :: [Square]
 board = [GO .. H2]
 
 cycleS :: Square -> [Square]
-cycleS s = drop 1 $ dropWhile (/= s) $ cycle board
+cycleS s = dropWhile (/= s) $ cycle board
 
 goBack :: Int -> Square -> Square
-goBack n s = last $ take (length board - (n `rem` length board)) $ cycleS s
+goBack n s = last $ take (length board - (n `rem` length board)) $ drop 1 $ cycleS s
 
 goNext :: [Square] -> Square -> Square
 goNext ss s = head $ dropWhile (`notElem` ss) $ cycleS s
@@ -35,8 +35,9 @@ cc :: [Square -> Square]
 cc = cycle $ map const [GO, JAIL] ++ replicate 14 id
 
 ch :: [Square -> Square]
-ch =  cycle $ goR : goR : goU : goBack 3 :
-              map const [GO, JAIL, C1, E3, H2, R1] ++ replicate 6 id
+ch =  cycle $ map const [GO, JAIL, C1, E3, H2, R1] ++
+                        [goR, goR, goU, goBack 3] ++
+                        replicate 6 id
 
 update :: Square -> State ([Square -> Square], [Square -> Square]) Square
 update s
@@ -45,17 +46,20 @@ update s
     | s == G2J = return JAIL
     | otherwise = return s
 
-run :: State (Square, ([Square -> Square], [Square -> Square]), Map.Map Square Integer, StdGen) ()
-run = modify mdf
-    where mdf (pos, c, m, g) = let score = sum $ take 2 $ randomRs (1, 4) g :: Int
-                                   (sq, nc) = runState (update (last . take score $ cycleS pos)) c
-                               in (sq, nc, Map.insertWith (const (+1)) sq 1 m, mkStdGen . head $ randoms g)
+run :: Int -> State (Square, ([Square -> Square], [Square -> Square]), Map.Map Square Integer, StdGen) ()
+run sides = modify mdf
+    where
+        mdf (pos, c, m, g) = let rolls = take 6 $ randomRs (1, sides) g :: [Int]
+                                 (sq, nc) = if rolls == replicate 6 2 then (JAIL, c) else 
+                                        runState (update (last . take (sum $ take 2 rolls) . drop 1 $ cycleS pos)) c
+                                  in (sq, nc, Map.insertWith (const (+1)) sq 1 m,
+                                     mkStdGen . fst $ random g)
 
 p84 :: Solution
 p84 input = concat . take 3 $ map (toStr . fromEnum . fst) $
             sortBy (\a b -> compare (snd b) (snd a)) $ Map.toList stats
         where
         limit = read input :: Int
-        act = replicateM_ limit run
+        act = replicateM_ limit (run 4)
         toStr = printf "%02d" :: (Int -> String)
         (_, _, stats, _) = execState act (GO, (cc, ch), Map.empty, mkStdGen 666)
