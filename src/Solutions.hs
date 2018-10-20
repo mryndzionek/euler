@@ -13,6 +13,7 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import Data.Numbers.Primes
 
+import Control.Arrow ((&&&))
 import Control.Monad
 import Control.Monad.State
 import Control.Applicative
@@ -135,7 +136,7 @@ p13 input = let numbers = map read $ lines input :: [Integer]
             in take 10 $ show.sum $ numbers
 
 p14 :: Solution
-p14 input = show.snd.maximum $ map (\x -> ((length.collatz) x, (head.collatz) x)) [1..size]
+p14 input = show.snd.maximum $ map ((length . collatz) &&& (head . collatz)) [1..size]
     where
     size = read input - 1 :: Int
     collatz n = takeWhile (> 1) (iterate next n) ++ [1]

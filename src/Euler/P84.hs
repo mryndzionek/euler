@@ -40,10 +40,8 @@ ch =  cycle $ goR : goR : goU : goBack 3 :
 
 update :: Square -> State ([Square -> Square], [Square -> Square]) Square
 update s
-    | s `elem` [CC1, CC2, CC3] = modify (first tail) >>
-                                 get >>= \(cc', _) -> return . head cc' $ s
-    | s `elem` [CH1, CH2, CH3] = modify (second tail) >>
-                                 get >>= \(_, ch') -> return . head ch' $ s
+    | s `elem` [CC1, CC2, CC3] = get >>= \(cc', _) -> modify (first tail)  >> (return . head cc' $ s)
+    | s `elem` [CH1, CH2, CH3] = get >>= \(_, ch') -> modify (second tail) >> (return . head ch' $ s)
     | s == G2J = return JAIL
     | otherwise = return s
 
@@ -51,7 +49,7 @@ run :: State (Square, ([Square -> Square], [Square -> Square]), Map.Map Square I
 run = modify mdf
     where mdf (pos, c, m, g) = let score = sum $ take 2 $ randomRs (1, 4) g :: Int
                                    (sq, nc) = runState (update (last . take score $ cycleS pos)) c
-                               in (sq, nc, Map.insertWith (\_ ov -> ov + 1) sq 1 m, mkStdGen . head $ randoms g)
+                               in (sq, nc, Map.insertWith (const (+1)) sq 1 m, mkStdGen . head $ randoms g)
 
 p84 :: Solution
 p84 input = concat . take 3 $ map (toStr . fromEnum . fst) $
