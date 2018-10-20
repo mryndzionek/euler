@@ -678,6 +678,11 @@ p82 input = show.minimum $ foldr1 fld1 matrix
         fld :: [Integer] -> [Integer] -> [Integer]
         fld c' p' = tail $ scanl (\a (p, c) -> c + min a p) (head p') (zip p' c')
 
+p85 :: Solution
+p85 input = let limit = read input :: Integer
+                asum x = x * (x + 1) `div` 2
+            in show . snd $ minimum [(abs (asum x * asum y - limit), x * y) | x <- [1 .. 2000], y <- [1 .. 2000]]
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -763,7 +768,8 @@ solutions = Map.fromList [
    ( 81, (p81, readFile "inputs/p81.txt")),
    ( 82, (p82, readFile "inputs/p82.txt")),
    ( 83, (p83, readFile "inputs/p83.txt")),
-   ( 84, (p84, return "100000"))]
+   ( 84, (p84, return "100000")),
+   ( 85, (p85, return "2000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
