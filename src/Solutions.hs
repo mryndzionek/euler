@@ -683,6 +683,20 @@ p85 input = let limit = read input :: Integer
                 asum x = x * (x + 1) `div` 2
             in show . snd $ minimum [(abs (asum x * asum y - limit), x * y) | x <- [1 .. 2000], y <- [1 .. 2000]]
 
+p86 :: Solution
+p86 input = show . fst . head $ dropWhile ((<limit) . snd) isum
+        where
+            limit = read input :: Integer
+            candidates = [(l, wh) | l <- [3 .. ], wh <- [3 .. 2 * l],
+                            let s = (sqrt . fromInteger) (wh * wh + l * l),
+                            s == (fromInteger (round s) :: Double)]
+            nsol l wh = if wh <= l then floor (halve wh)
+                                   else 1 + l - ceiling (halve wh)
+                where
+                    halve :: Integer -> Double
+                    halve a = fromIntegral a / 2
+            isum = scanl' (\(_, s) (l, wh) -> (l, s + nsol l wh)) (0, 0) candidates
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -769,7 +783,8 @@ solutions = Map.fromList [
    ( 82, (p82, readFile "inputs/p82.txt")),
    ( 83, (p83, readFile "inputs/p83.txt")),
    ( 84, (p84, return "100000")),
-   ( 85, (p85, return "2000000"))]
+   ( 85, (p85, return "2000000")),
+   ( 86, (p86, return "1000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
