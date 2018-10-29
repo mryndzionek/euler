@@ -697,6 +697,15 @@ p86 input = show . fst . head $ dropWhile ((<limit) . snd) isum
                     halve a = fromIntegral a / 2
             isum = scanl' (\(_, s) (l, wh) -> (l, s + nsol l wh)) (0, 0) candidates
 
+p87 :: Solution
+p87 input = show . length . Set.fromList . filter (< limit) $ nums
+    where
+    limit = read input :: Int
+    plimit = floor (sqrt (fromIntegral limit) :: Double) :: Integer
+    primes' = map fromIntegral $ takeWhile (<= plimit) primes
+    f a b c = (a ^ (2 :: Int)) + (b ^ (3 :: Int)) + (c ^ (4 :: Int))
+    nums = f <$> primes' <*> primes' <*> primes'
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -784,7 +793,8 @@ solutions = Map.fromList [
    ( 83, (p83, readFile "inputs/p83.txt")),
    ( 84, (p84, return "100000")),
    ( 85, (p85, return "2000000")),
-   ( 86, (p86, return "1000000"))]
+   ( 86, (p86, return "1000000")),
+   ( 87, (p87, return "50000000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
