@@ -3,7 +3,8 @@ module Main where
 import Numeric
 import Data.Char
 import Data.List
-import Data.Array
+import Data.Array (Array, (!), array, assocs)
+import Data.Maybe (fromMaybe)
 import Data.Ratio
 import Data.Tuple
 import Data.Bits
@@ -706,6 +707,26 @@ p87 input = show . length . Set.fromList . filter (< limit) $ nums
     f a b c = (a ^ (2 :: Int)) + (b ^ (3 :: Int)) + (c ^ (4 :: Int))
     nums = f <$> primes' <*> primes' <*> primes'
 
+p88 :: Solution
+p88 input = show . sum . nub . drop 2 . Map.elems $ Map.foldlWithKey f'' accum cache
+        where
+        limit = read input :: Int
+        cache = foldl' f Map.empty [2 .. 2 * limit]
+        accum = Map.fromList [(n, 2 * n) | n <- [0 .. limit]]
+        f m n = case Map.lookup n m of
+                     Just _  -> m
+                     Nothing -> foldl' (f' n) m [d | d <- [2 .. n], d * d <= n]
+        f' n m d = let (q, r) = divMod n d
+                       k = n - d - q + 2
+                       is = Set.insert k . Set.map ((k - 1) +) $ fromMaybe Set.empty (Map.lookup q m)
+                 in if r /= 0 then m
+                    else case Map.lookup n m of
+                              Just _  -> Map.adjust (`Set.union` is) n m
+                              Nothing -> Map.insert n is m
+        f'' m n k = let m1 = Map.filter (> n) $ Map.restrictKeys m k
+                        m2 = Map.fromList $ zip (Map.keys m1) $ repeat n
+                    in Map.union m2 m  
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -794,7 +815,8 @@ solutions = Map.fromList [
    ( 84, (p84, return "100000")),
    ( 85, (p85, return "2000000")),
    ( 86, (p86, return "1000000")),
-   ( 87, (p87, return "50000000"))]
+   ( 87, (p87, return "50000000")),
+   ( 88, (p88, return "12000"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
