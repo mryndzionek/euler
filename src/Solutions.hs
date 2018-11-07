@@ -740,6 +740,18 @@ p89 input = show . sum $ map (sum . map gain . romCut) literals
         | l `elem` ["IIII", "XXXX", "CCCC"] = 2
         | otherwise = 0
 
+p90 :: Solution
+p90 _ = show . length $ filter (\x -> all (`elem` x) sq) ds
+    where
+    sq = [1, 4, 6, 16, 25, 36, 46, 64, 81]
+    ds = map expand . Set.toList . Set.fromList $
+         let dices = nub . map sort $ nPerms 6 [0..9] :: [[Int]]
+         in (\d1 d2 -> if d1 < d2 then (d1, d2) else (d2, d1)) <$> dices <*> dices
+    expand (da, db) = nub . concat $
+        (\a b -> let a' = if a == 9 then 6 else a
+                     b' = if b == 9 then 6 else b
+                 in [a' * 10 + b', b' * 10 + a']) <$> da <*> db
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -830,7 +842,8 @@ solutions = Map.fromList [
    ( 86, (p86, return "1000000")),
    ( 87, (p87, return "50000000")),
    ( 88, (p88, return "12000")),
-   ( 89, (p89, readFile "inputs/p89.txt"))]
+   ( 89, (p89, readFile "inputs/p89.txt")),
+   ( 90, (p90, return ""))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
