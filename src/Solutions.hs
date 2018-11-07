@@ -727,6 +727,19 @@ p88 input = show . sum . nub . drop 2 . Map.elems $ Map.foldlWithKey f'' accum c
                         m2 = Map.fromList $ zip (Map.keys m1) $ repeat n
                     in Map.union m2 m  
 
+p89 :: Solution
+p89 input = show . sum $ map (sum . map gain . romCut) literals
+    where
+    literals = lines input
+    lut = ["I", "IIII", "IV", "V", "VIIII", "IX", "X", "XXXX", "XL", "L", "LXXXX", "XC", "C", "CCCC", "CD", "D", "DCCCC", "CM", "M"]
+    romCut = unfoldr (\l -> let p = last . filter (`isPrefixOf` l) $ lut
+                            in if null l then Nothing else Just (p, drop (length p) l))
+    gain :: String -> Int
+    gain l
+        | l `elem` ["VIIII", "DCCCC", "LXXXX"] = 3
+        | l `elem` ["IIII", "XXXX", "CCCC"] = 2
+        | otherwise = 0
+
 solutions :: Map.Map Int (Solution, IO String)
 solutions = Map.fromList [
    (  1, ( p1, return "1000")),
@@ -816,7 +829,8 @@ solutions = Map.fromList [
    ( 85, (p85, return "2000000")),
    ( 86, (p86, return "1000000")),
    ( 87, (p87, return "50000000")),
-   ( 88, (p88, return "12000"))]
+   ( 88, (p88, return "12000")),
+   ( 89, (p89, readFile "inputs/p89.txt"))]
 
 mayFile :: FilePath -> MaybeT IO String
 mayFile fp = do
