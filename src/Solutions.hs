@@ -731,7 +731,8 @@ p89 :: Solution
 p89 input = show . sum $ map (sum . map gain . romCut) literals
     where
     literals = lines input
-    lut = ["I", "IIII", "IV", "V", "VIIII", "IX", "X", "XXXX", "XL", "L", "LXXXX", "XC", "C", "CCCC", "CD", "D", "DCCCC", "CM", "M"]
+    lut = ["I", "IIII", "IV", "V", "VIIII", "IX", "X", "XXXX", "XL", "L",
+           "LXXXX", "XC", "C", "CCCC", "CD", "D", "DCCCC", "CM", "M"]
     romCut = unfoldr (\l -> let p = last . filter (`isPrefixOf` l) $ lut
                             in if null l then Nothing else Just (p, drop (length p) l))
     gain :: String -> Int
