@@ -7,8 +7,8 @@ import Data.List.Split
 import Data.Graph.AStar
 import qualified Data.HashSet as HS
 
-p83 :: Solution
-p83 input = show score
+p83 :: String -> Maybe Integer
+p83 input = score
     where
     matrix = (map (map read . splitOn ",") . lines) input :: [[Integer]]
     maxel = maximum $ concat matrix

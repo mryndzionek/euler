@@ -2,7 +2,6 @@ module Euler.P84 (p84) where
 
 import Data.List (sortBy)
 import Text.Printf (printf)
-import Euler.Util
 import System.Random
 import Control.Arrow (first, second)
 import Control.Monad.State
@@ -55,8 +54,8 @@ run sides = modify mdf
                                   in (sq, nc, Map.insertWith (const (+1)) sq 1 m,
                                      mkStdGen . fst $ random g)
 
-p84 :: Solution
-p84 input = concat . take 3 $ map (toStr . fromEnum . fst) $
+p84 :: String -> [String]
+p84 input = take 3 $ map (toStr . fromEnum . fst) $
             sortBy (\a b -> compare (snd b) (snd a)) $ Map.toList stats
         where
         limit = read input :: Int

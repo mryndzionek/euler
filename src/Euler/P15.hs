@@ -3,7 +3,6 @@ module Euler.P15 (p15, p15_brute) where
 
 import Data.List
 import Data.Fix
-import Euler.Util
 
 -- This brute force solution using F-algebras
 -- Just for fun :)
@@ -27,15 +26,15 @@ countAlg (NodeF _ lst) = sum lst
 paths :: Int -> Int
 paths size = hylo countAlg (coalg size) (0, 0)
 
-p15_brute :: Solution
-p15_brute input = show $ paths size
+p15_brute :: String -> Int
+p15_brute input = paths size
     where
     size = read input :: Int
 
 -- This is more efficient solution
 
-p15 :: Solution
-p15 input = show.last.last $ grid
+p15 :: String -> Integer
+p15 input = last.last $ grid
     where
     size = 1 + read input :: Int
     grid = take size $ iterate next (replicate size 1) :: [[Integer]]

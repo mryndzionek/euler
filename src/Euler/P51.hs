@@ -6,8 +6,8 @@ import Data.List
 import Data.Numbers.Primes
 import qualified Data.Map.Strict as Map
 
-p51 :: Solution
-p51 input = show.maximum $ map (\(a, b) -> (length b, a, sort b)) $ gather $ solve upper lower
+p51 :: String -> (Int, String, String)
+p51 input = maximum $ map (\(a, b) -> (length b, a, sort b)) $ gather $ solve upper lower
      where
     digits = read input :: Int
     upper = 10 ^ digits :: Int

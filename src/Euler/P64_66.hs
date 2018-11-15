@@ -1,6 +1,5 @@
 module Euler.P64_66 (p64, p65, p66) where
 
-import Euler.Util
 import Data.Char
 import Data.Ratio
 import Control.Monad.State
@@ -24,19 +23,19 @@ evalFraction = foldr cont 0
         cont x 0 = x % 1
         cont x y = (x % 1) + (1 / y)
 
-p64 :: Solution
-p64 input = show . length $ filter odd $ map (subtract 1 . length . compute) [2..limit]
+p64 :: String -> Int
+p64 input = length $ filter odd $ map (subtract 1 . length . compute) [2..limit]
     where
         limit = read input :: Integer
 
-p65 :: Solution
-p65 input = show.sum $ map digitToInt.show.numerator.evalFraction $ take limit e
+p65 :: String -> Int
+p65 input = sum $ map digitToInt.show.numerator.evalFraction $ take limit e
     where
         limit = read input :: Int
         e = [2, 1] ++ concat [[n, 1, 1] | n <- [2,4..] :: [Integer]]
 
-p66 :: Solution
-p66 input = show.snd.maximum $ zip (map findX candidates) candidates
+p66 :: String -> Integer
+p66 input = snd.maximum $ zip (map findX candidates) candidates
     where
         limit = read input :: Integer
         candidates = filter (not . isPerfectSquare) ([2..limit] :: [Integer])

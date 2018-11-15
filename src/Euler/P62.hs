@@ -1,12 +1,11 @@
 module Euler.P62 (p62) where
 
-import Euler.Util
 import Data.List
 import Control.Monad.State
 import qualified Data.Map.Strict as Map
 
-p62 :: Solution
-p62 _ = show $ evalState (solve 1) Map.empty
+p62 :: p -> Integer
+p62 _ = evalState (solve 1) Map.empty
 
 solve :: Integer -> State (Map.Map String (Integer, Integer)) Integer
 solve n = do

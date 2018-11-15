@@ -1,5 +1,6 @@
+{-# LANGUAGE ExistentialQuantification #-}
 module Euler.Util (
-    Solution,
+    Solution(..),
     pfactors,
     divisors,
     fibs,
@@ -15,7 +16,9 @@ import System.TimeIt
 import Data.Numbers.Primes
 import Control.Monad.State
 
-type Solution = String -> String
+data Solution = forall a. Show a => Solution (String -> a)
+runSolution :: Solution -> String -> String
+runSolution (Solution s) i = show (s i)
 
 pfactors :: Int -> [Int]
 pfactors n = factor n primes
@@ -57,4 +60,4 @@ nPerms n = evalStateT (replicateM n choose)
 printSolution :: (Int, Solution, IO String) -> IO ()
 printSolution (number, problem, input) = do
     i <- input
-    timeIt $ putStr $ "Problem " ++ show number ++ ": " ++ problem i ++ ": "
+    timeIt $ putStr $ "Problem " ++ show number ++ ": " ++ (runSolution problem i) ++ ": "
