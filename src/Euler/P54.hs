@@ -18,10 +18,8 @@ char2value a = Map.lookup a m
     where
     m = Map.fromList (zip "23456789TJQKA" [Two .. Ace])
 
-p54 :: String -> String
-p54 input = case hands of
-                Just h  -> show.length $ filter (\(p1, p2) -> score p1 > score p2) h
-                Nothing -> "Wrong input format !!!"
+p54 :: String -> Maybe Int
+p54 input = (length . filter (\(p1, p2) -> score p1 > score p2)) <$> hands
     where
         hands = mapM
                     ((\ (p1, p2) ->
