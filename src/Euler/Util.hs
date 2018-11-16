@@ -57,7 +57,6 @@ choose = StateT (\s -> s >>= \v -> return (v, delete v s))
 nPerms :: Eq a => Int -> [a] -> [[a]]
 nPerms n = evalStateT (replicateM n choose)
 
-printSolution :: (Int, Solution, IO String) -> IO ()
-printSolution (number, problem, input) = do
-    i <- input
-    timeIt $ putStr $ "Problem " ++ show number ++ ": " ++ (runSolution problem i) ++ ": "
+printSolution :: Int -> Solution -> String -> IO ()
+printSolution number problem input = timeIt $ putStr $ "Problem " ++
+    show number ++ ": " ++ runSolution problem input ++ ": "

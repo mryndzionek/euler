@@ -848,31 +848,26 @@ mayFile fp = do
          Right contents -> return $ Just contents
          Left _         -> return Nothing
 
-getInput :: String -> IO String
-getInput i = do
-    res <- return number <|> mayFile i <|> return (Just i)
-    case res of
-         Nothing -> undefined -- will never happen, as the last alternative is 'pure i'
-         Just s  -> return s
+getInput :: String -> IO (Maybe String)
+getInput i = return number <|> mayFile i <|> return (Just i)
     where
     number = show <$> (readMay i :: Maybe Int)
     
 handle :: [String] -> IO ()
-handle (a1:a2:_) = case Map.lookup p solutions of
-                        Nothing -> putStrLn "Problem not yet solved !!!"
-                        Just (pr, _) -> printSolution (p, pr, getInput a2)
-                        where
-                        p = read a1 :: Int
+handle (a1:a2:_) = do
+    i <- getInput a2
+    let pr = fst <$> Map.lookup p solutions
+    fromMaybe (putStrLn "Problem not yet solved !!!") $ printSolution <$> Just p <*> pr <*> i
+    where
+    p = read a1 :: Int
 
 handle (a:_) = case Map.lookup p solutions of
-                    Nothing -> putStrLn "Problem not yet solved !!!"
-                    Just (pr, i) -> printSolution (p, pr, i)
-                    where
-                    p = read a :: Int
-
-handle [] = mapM_ printSolution solutions'
+        Just (pr, i) -> i >>= printSolution p pr
+        Nothing      -> putStrLn "Problem not yet solved !!!"
     where
-    solutions' = map (\(n, (p, i)) -> (n, p, i)) $ Map.toList solutions
+    p = read a :: Int
+
+handle [] = mapM_ (\(n, (p, i)) -> i >>= printSolution n p) $ Map.toList solutions
 
 main :: IO ()
 main = do
