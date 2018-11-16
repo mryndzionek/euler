@@ -18,7 +18,6 @@ import Control.Arrow ((&&&))
 import Control.Monad
 import Control.Monad.State
 import Control.Applicative
-import Control.Monad.Trans.Maybe
 import qualified Control.Exception as Ex
 import Safe
 
@@ -842,16 +841,16 @@ solutions = Map.fromList [
    ( 89, ( Solution p89, readFile "inputs/p89.txt")),
    ( 90, ( Solution p90, return ""))]
 
-mayFile :: FilePath -> MaybeT IO String
+mayFile :: FilePath -> IO (Maybe String)
 mayFile fp = do
-    res <- liftIO $ Ex.try (readFile fp) :: MaybeT IO (Either Ex.SomeException String)
+    res <- Ex.try (readFile fp) :: IO (Either Ex.SomeException String)
     case res of
-         Right contents -> return contents
-         Left _ -> MaybeT $ return Nothing
+         Right contents -> return $ Just contents
+         Left _         -> return Nothing
 
 getInput :: String -> IO String
 getInput i = do
-    res <- runMaybeT $ MaybeT (return number) <|> (pure i >>= mayFile) <|> pure i
+    res <- return number <|> mayFile i <|> return (Just i)
     case res of
          Nothing -> undefined -- will never happen, as the last alternative is 'pure i'
          Just s  -> return s
