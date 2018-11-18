@@ -3,8 +3,8 @@ module Euler.P61 (p61) where
 import Euler.Util
 import Control.Monad
 
-p61 :: String -> Integer
-p61 input = sum.head $ do
+p61 :: Integer -> Integer
+p61 limit = sum.head $ do
     p3 <- gen (\n -> n * (n + 1) `quot` 2)
     p4 <- gen (\n -> n * n)
     guard $ matches [p3] p4
@@ -20,7 +20,6 @@ p61 input = sum.head $ do
     guard $ cyclic p
     return p
     where
-        limit = read input :: Integer
         gen f = dropWhile (<1000) $ takeWhile (<= limit) [f n | n <- [1..]]
 
 check :: Integer -> Integer -> Bool

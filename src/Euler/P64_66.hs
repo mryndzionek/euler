@@ -23,21 +23,17 @@ evalFraction = foldr cont 0
         cont x 0 = x % 1
         cont x y = (x % 1) + (1 / y)
 
-p64 :: String -> Int
-p64 input = length $ filter odd $ map (subtract 1 . length . compute) [2..limit]
-    where
-        limit = read input :: Integer
+p64 :: Integer -> Int
+p64 limit = length $ filter odd $ map (subtract 1 . length . compute) [2..limit]
 
-p65 :: String -> Int
-p65 input = sum $ map digitToInt.show.numerator.evalFraction $ take limit e
+p65 :: Int -> Int
+p65 limit = sum $ map digitToInt.show.numerator.evalFraction $ take limit e
     where
-        limit = read input :: Int
         e = [2, 1] ++ concat [[n, 1, 1] | n <- [2,4..] :: [Integer]]
 
-p66 :: String -> Integer
-p66 input = snd.maximum $ zip (map findX candidates) candidates
+p66 :: Integer -> Integer
+p66 limit = snd.maximum $ zip (map findX candidates) candidates
     where
-        limit = read input :: Integer
         candidates = filter (not . isPerfectSquare) ([2..limit] :: [Integer])
         isPerfectSquare val = val == sqrf * sqrf
             where

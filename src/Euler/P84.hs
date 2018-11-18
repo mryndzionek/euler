@@ -54,11 +54,10 @@ run sides = modify mdf
                                   in (sq, nc, Map.insertWith (const (+1)) sq 1 m,
                                      mkStdGen . fst $ random g)
 
-p84 :: String -> [String]
-p84 input = take 3 $ map (toStr . fromEnum . fst) $
+p84 :: Int -> [String]
+p84 limit = take 3 $ map (toStr . fromEnum . fst) $
             sortBy (\a b -> compare (snd b) (snd a)) $ Map.toList stats
         where
-        limit = read input :: Int
         act = replicateM_ limit (run 4)
         toStr = printf "%02d" :: (Int -> String)
         (_, _, stats, _) = execState act (GO, (cc, ch), Map.empty, mkStdGen 666)

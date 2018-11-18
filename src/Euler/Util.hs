@@ -1,6 +1,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module Euler.Util (
     Solution(..),
+    Str(..),
     pfactors,
     divisors,
     fibs,
@@ -16,9 +17,13 @@ import System.TimeIt
 import Data.Numbers.Primes
 import Control.Monad.State
 
-data Solution = forall a. Show a => Solution (String -> a)
+data Solution = forall a b. (Show a, Read b) => Solution (b -> a)
 runSolution :: Solution -> String -> String
-runSolution (Solution s) i = show (s i)
+runSolution (Solution s) i = show (s $ read i)
+
+newtype Str = Str String
+instance Read Str where
+    readsPrec _ input = [(Str input, "")]
 
 pfactors :: Int -> [Int]
 pfactors n = factor n primes

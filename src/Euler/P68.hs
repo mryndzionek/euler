@@ -15,7 +15,7 @@ rings = do
     guard $ all (== head (map sum ring)) (tail (map sum ring))
     return ring
 
-p68 :: p -> String
+p68 :: () -> String
 p68 _ = maximum $ filter ((==16).length) $ map toString rings
     where
         toString = concatMap show . concat

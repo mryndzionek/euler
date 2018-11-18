@@ -33,10 +33,10 @@ p15_brute input = paths size
 
 -- This is more efficient solution
 
-p15 :: String -> Integer
+p15 :: Int -> Integer
 p15 input = last.last $ grid
     where
-    size = 1 + read input :: Int
+    size = 1 + input
     grid = take size $ iterate next (replicate size 1) :: [[Integer]]
     next row = unfoldr grow (0, row)
     grow (s, r:rs) = Just (s + r, (s + r,rs))

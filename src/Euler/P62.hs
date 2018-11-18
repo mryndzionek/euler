@@ -4,7 +4,7 @@ import Data.List
 import Control.Monad.State
 import qualified Data.Map.Strict as Map
 
-p62 :: p -> Integer
+p62 :: () -> Integer
 p62 _ = evalState (solve 1) Map.empty
 
 solve :: Integer -> State (Map.Map String (Integer, Integer)) Integer

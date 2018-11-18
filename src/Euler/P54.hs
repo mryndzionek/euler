@@ -18,8 +18,8 @@ char2value a = Map.lookup a m
     where
     m = Map.fromList (zip "23456789TJQKA" [Two .. Ace])
 
-p54 :: String -> Maybe Int
-p54 input = (length . filter (\(p1, p2) -> score p1 > score p2)) <$> hands
+p54 :: Str -> Maybe Int
+p54 (Str input) = (length . filter (\(p1, p2) -> score p1 > score p2)) <$> hands
     where
         hands = mapM
                     ((\ (p1, p2) ->

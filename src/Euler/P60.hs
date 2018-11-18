@@ -17,7 +17,5 @@ solve :: StateT [Integer] [] [Integer]
 solve = let choices = replicateM 5 choosePrime
         in sequence $ choices 3 
 
-p60 :: String -> Integer
-p60 input = sum .head $ evalStateT solve (takeWhile (<= limit) primes)
-    where
-        limit = read input :: Integer
+p60 :: Integer -> Integer
+p60 limit = sum .head $ evalStateT solve (takeWhile (<= limit) primes)

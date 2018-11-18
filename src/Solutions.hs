@@ -35,35 +35,30 @@ import Euler.P83
 import Euler.P84
 import Euler.Util
 
-p1 :: String -> Int
-p1 input = sum $ filter (multOf [3, 5]) [1..size - 1]
+p1 :: Int -> Int
+p1 size = sum $ filter (multOf [3, 5]) [1..size - 1]
     where
-    size = read input :: Int
     multOf ms x = any (\f -> f x == 0) $ map (flip mod) ms
 
-p2 :: String -> Integer
-p2 input = sum $ filter even $ takeWhile (< size) fibs
-    where
-    size = read input :: Integer
+p2 :: Integer -> Integer
+p2 size = sum $ filter even $ takeWhile (< size) fibs
 
-p3 :: String -> Int
-p3 input = maximum $ pfactors (read input)
+p3 :: Int -> Int
+p3 input = maximum $ pfactors input
 
-p4 :: String -> Int
-p4 input = maximum $ filter isPalindrome numbers
+p4 :: Int -> Int
+p4 size = maximum $ filter isPalindrome numbers
     where
     isPalindrome x = let s = show x
                      in
                      s == reverse s
     numbers = [x*y | x <- [beg..end], y <- [x..end]] :: [Int]
-    size = read input :: Int
     beg = 10 ^ (size - 1)
     end = (10 ^ size) - 1
 
-p5 :: String -> Int
-p5 input = reduce . lp . nub . concat $ map (count . pfactors) [2..size]
+p5 :: Int -> Int
+p5 size = reduce . lp . nub . concat $ map (count . pfactors) [2..size]
     where
-    size = read input :: Int
     reduce :: [(Int, Int)] -> Int
     reduce = product . map (uncurry (^))
     lp a = Map.toList $ foldr f Map.empty a
@@ -72,41 +67,35 @@ p5 input = reduce . lp . nub . concat $ map (count . pfactors) [2..size]
                      Nothing -> Map.insert x y m
                      Just _  -> Map.adjust (max y) x m
 
-p6 :: String -> Int
-p6 input = (s * s) - sum [x*x | x <- [1..size]]
+p6 :: Int -> Int
+p6 size = (s * s) - sum [x*x | x <- [1..size]]
     where
-    size = read input :: Int
     s = sum [1..100]
 
-p7 :: String -> Integer
-p7 input = primes !! upper :: Integer
-    where
-    upper = read input - 1 :: Int
+p7 :: Int -> Integer
+p7 a = primes !! (a - 1) :: Integer
 
-p8 :: String -> Int
-p8 input = maximum $ unfoldr grow digits
+p8 :: Str -> Int
+p8 (Str input) = maximum $ unfoldr grow digits
     where
     digits = map digitToInt $ (concat . lines) input
     grow seed = case splitAt 13 seed of
                      (_, [])  -> Nothing
                      (xs, _)  -> Just (product xs, drop 1 seed)
 
-p9 :: String -> Int
-p9 input = reduce [[a, b, c] | a <- [1..sum'],
+p9 :: Int -> Int
+p9 sum' = reduce [[a, b, c] | a <- [1..sum'],
                                b <- [1..sum' - a],
                                let c = sum' - a - b,
                                a*a + b*b == c*c]
     where
     reduce = product.head
-    sum' = read input :: Int
     
-p10 :: String -> Int
-p10 input = sum (takeWhile (< size) primes)
-    where
-    size = read input :: Int
+p10 :: Int -> Int
+p10 size = sum (takeWhile (< size) primes)
 
-p11 :: String -> (Maybe Int, Maybe [Int])
-p11 input = maximum $ map (\x -> (product <$> x, x)) g
+p11 :: Str -> (Maybe Int, Maybe [Int])
+p11 (Str input) = maximum $ map (\x -> (product <$> x, x)) g
     where
     matrix = map (map read . splitOn " ") $ lines input
     g = concat [groups matrix (x, y) | x <- [0..19], y <- [0..19]]
@@ -122,38 +111,34 @@ p11 input = maximum $ map (\x -> (product <$> x, x)) g
     lu :: [[Int]] -> (Int, Int) -> Maybe Int
     lu a (x, y) = safeLu y a >>= safeLu x
 
-p12 :: String -> Int
-p12 input = snd . head $ dropWhile ((< size) . fst) (map cp triangle)
+p12 :: Int -> Int
+p12 size = snd . head $ dropWhile ((< size) . fst) (map cp triangle)
     where
-    size = read input :: Int
     cp x = (length $ divisors x, x)
     triangle :: [Int]
     triangle = [sum [1..x] | x <- [1..]]
 
-p13 :: String -> String
-p13 input = let numbers = map read $ lines input :: [Integer]
+p13 :: Str -> String
+p13 (Str input) = let numbers = map read $ lines input :: [Integer]
             in take 10 $ show.sum $ numbers
 
-p14 :: String -> Int
-p14 input = snd.maximum $ map ((length . collatz) &&& (head . collatz)) [1..size]
+p14 :: Int -> Int
+p14 size = snd.maximum $ map ((length . collatz) &&& (head . collatz)) [1..size - 1]
     where
-    size = read input - 1 :: Int
     collatz n = takeWhile (> 1) (iterate next n) ++ [1]
     next x
         | even x  = x `quot` 2
         | odd  x  = 3 * x + 1
         | otherwise = undefined
 
-p16 :: String -> Int
-p16 input = sum . map digitToInt $ show power
+p16 :: Integer -> Int
+p16 exp' = sum . map digitToInt $ show power
     where
     power = 2 ^ exp' :: Integer
-    exp' = read input :: Integer
 
-p17 :: String -> Int
-p17 input = length . concat $ concatMap convert [1..size]
+p17 :: Int -> Int
+p17 size = length . concat $ concatMap convert [1..size]
     where
-    size = read input :: Int
     toTwenty = Map.fromList [(1, "one"),
         (2, "two"),
         (3, "three"),
@@ -192,8 +177,8 @@ p17 input = length . concat $ concatMap convert [1..size]
         | otherwise                     = Nothing
     stitch l = concat <$> sequence l
 
-p18 :: String -> Int
-p18 input = head $ foldl foldtr (reduce (head triangle)) (tail triangle)
+p18 :: Str -> Int
+p18 (Str input) = head $ foldl foldtr (reduce (head triangle)) (tail triangle)
     where
     foldtr red row = reduce $ zipWith (+) red row
     triangle = reverse $ map (map read . splitOn " ") $ lines input :: [[Int]]
@@ -202,10 +187,9 @@ p18 input = head $ foldl foldtr (reduce (head triangle)) (tail triangle)
     trans [x] = Just (x, [])
     trans [] = Nothing
 
-p19 :: String -> Int
-p19 input = length $ filter (==(7, 1)) wd_pairs
+p19 :: Int -> Int
+p19 years = length $ filter (==(7, 1)) wd_pairs
     where
-    years = read input :: Int
     weekdays = cycle [1..7]
     wd_pairs = zip weekdays (calendar years) :: [(Int, Int)]
     mult n a = concat $ replicate n a
@@ -220,102 +204,87 @@ p19 input = length $ filter (==(7, 1)) wd_pairs
         where
         lc = (y - 1) `quot` 4
 
-p20 :: String -> Int
-p20 input = sum $ map digitToInt $ (show.product) [1..size]
-    where
-    size = read input :: Integer
+p20 :: Integer -> Int
+p20 size = sum $ map digitToInt $ (show.product) [1..size]
 
-p21 :: String -> Integer
-p21 input = sum $ map fst $ filter (uncurry (==))
+p21 :: Integer -> Integer
+p21 size = sum $ map fst $ filter (uncurry (==))
     [(a, sumd b) | (a, b) <- [(a, b) | a <- [1..size - 1], let b = sumd a, a /= b]]
     where
-    size = read input :: Integer
     sumd x = sum $ divisors x
 
-p22 :: String -> Int
-p22 input = sum $ zipWith (*) [1 ..] (map score $ sort names)
+p22 :: Str -> Int
+p22 (Str input) = sum $ zipWith (*) [1 ..] (map score $ sort names)
     where
     names = map strip $ splitOn "," $ concat $ lines input
     strip = dropWhileEnd (=='"') . dropWhile (=='"')
     score name = sum $ map (\x -> ord x - ord '@') name
 
-p23 :: String -> Int
-p23 input = sum [x | x <- [1..size], not $ Set.member x isAbundantSum]
+p23 :: Int -> Int
+p23 size = sum [x | x <- [1..size], not $ Set.member x isAbundantSum]
     where
-    size = read input :: Int
     sumd x = sum $ divisors x
     abundant = [x | x <- [1..size], x < sumd x]
     isAbundant = Set.fromList abundant
     isAbundantSum = Set.fromList [x + y | x <- abundant, y <- [x..size - x], Set.member y isAbundant]
 
-p24 :: String -> [Int]
-p24 input = Per.elems . last $ take size perm
+p24 :: Int -> [Int]
+p24 size = Per.elems . last $ take size perm
     where
-    size = read input :: Int
     perm = perm' $ Just $ Per.permute 10
     perm' p = case p of
                    Just p' -> p' : perm' (Per.next p')
                    Nothing -> []
 
-p25 :: String -> Int
-p25 input = (+1).length $ takeWhile (\a -> length (show a) < size) (1:fibs)
-    where
-    size = read input :: Int
+p25 :: Int -> Int
+p25 size = (+1).length $ takeWhile (\a -> length (show a) < size) (1:fibs)
 
-p26 :: String -> Int
-p26 input = snd . maximum $ zip recuring ([1..] :: [Int])
+p26 :: Int -> Int
+p26 limit = snd . maximum $ zip recuring ([1..] :: [Int])
     where
-    limit = read input :: Int
     recur n = unfoldr (\a -> Just (a `rem` n, 10 * (a `rem` n))) 10
     recuring = [length.Set.fromList $ take limit $ recur n | n <- [1..limit]] :: [Int]
 
-p27 :: String -> Int
-p27 input = product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit], b <- [-limit..limit]]
+p27 :: Int -> Int
+p27 limit = product.snd.maximum $ [(plen a b, [a, b]) | a <- [-limit..limit], b <- [-limit..limit]]
     where
     plen a b = length $ takeWhile isPrime [q | n <- [0..], let q = n * n + a * n + b, q >= 0]
-    limit = read input :: Int
 
-p28 :: String -> Integer
-p28 input = sum.concat $ diagonals
+p28 :: Integer -> Integer
+p28 size = sum.concat $ diagonals
     where
-    size = read input :: Integer
     maxLevel = (size - 1) `quot` 2
     diagonals = [1] : [take 4 $ iterate (\x -> x - 2 * l) s |
                        l <- [1..maxLevel], let a = 2 * l + 1,
                                            let s = a * a] :: [[Integer]]
 
-p29 :: String -> Int
-p29 input = length.nub $ [a ^ b | a <- [2..limit], b <- [2..limit]]
-    where
-    limit = read input :: Integer
+p29 :: Integer -> Int
+p29 limit = length.nub $ [a ^ b | a <- [2..limit], b <- [2..limit]]
 
-p30 :: String -> Integer
-p30 input = sum $ filter (\n -> n == digPow n) [2..limit]
+p30 :: Integer -> Integer
+p30 powers = sum $ filter (\n -> n == digPow n) [2..limit]
     where
     limit =   9^ (fst . head) (dropWhile (uncurry (<)) [(x, numDigits x) | x <- [1..]])
-    powers = read input :: Integer
     digPow = sum . map ((^powers) . toInteger . digitToInt) . show
     numDigits n = length $ show (9^powers*n)
 
-p31 :: [Int] -> String -> Integer
-p31 coins input = ways amount coins
+p31 :: [Int] -> Int -> Integer
+p31 coins amount = ways amount coins
     where
-    amount = read input :: Int
     ways :: Int -> [Int] -> Integer
     ways n c = last . snd $ until (null . fst) way (c, 1 : replicate n 0)
     way (c, s) = (drop 1 c, zipWith (+) s (replicate (head c) 0 ++ snd (way (c, s))))
 
-p32 :: String -> Int
-p32 input = sum.nub $ map (uncurry (*)) candidates
+p32 :: Int -> Int
+p32 limit = sum.nub $ map (uncurry (*)) candidates
     where
-    limit = read input :: Int
     candidates = filter (\(n,m) -> isPandigit $ toStr (n, m))
                  [(n, m) | n <- [1..limit - 1], m <- [1..limit `quot` n]] :: [(Int, Int)]
     toStr (n, m) = show n ++ show m ++ show (m*n)
     isPandigit n = let m = filter (/= '0') n in
                            (length m == 9) && length m == length (Set.fromList m)
 
-p33 :: p -> Integer
+p33 :: () -> Integer
 p33 _ = denominator.product $ ([a % c | a <- [1..9],
                                              b <- [1..9],
                                              c <- [1..9],
@@ -323,7 +292,7 @@ p33 _ = denominator.product $ ([a % c | a <- [1..9],
                                              a /= b && a/= c] :: [Ratio Integer])
     where isCancelling a b c = ((10 * a + b)%(10 * b + c)) == (a % c)
 
-p34 :: p -> Int
+p34 :: () -> Int
 p34 _ = sum [x | x <- [3..limit+1], fsum x]
     where
     fsum x = x == sum (map (factorial . digitToInt) $ show x)
@@ -331,10 +300,9 @@ p34 _ = sum [x | x <- [3..limit+1], fsum x]
     factorials = 1 : map (\n -> product [1..n]) [1..9]
     limit = snd.head $ dropWhile (uncurry (<)) [(10^x, x * factorials !! 9) | x <- [1..]] :: Int
 
-p35 :: String -> Int
-p35 input = length $ filter iscircular $ takeWhile (<limit) primes
+p35 :: Int -> Int
+p35 limit = length $ filter iscircular $ takeWhile (<limit) primes
     where
-    limit = read input :: Int
     iscircular n = all isPrime $ rotations n
     rotations :: Int -> [Int]
     rotations n = take l $ map (read . take l) $ iterate (drop 1) $ cycle s
@@ -342,15 +310,14 @@ p35 input = length $ filter iscircular $ takeWhile (<limit) primes
         s = show n
         l = length s
 
-p36 :: String -> Int
-p36 input = sum $ filter f [1..limit]
+p36 :: Int -> Int
+p36 limit = sum $ filter f [1..limit]
     where
-    limit = read input :: Int
     ispalindrome s = s == reverse s
     tobin n = showIntAtBase 2 intToDigit n ""
     f x = ispalindrome (show x) && ispalindrome (tobin x)
 
-p37 :: String -> Integer
+p37 :: () -> Integer
 p37 _ = sum $ take 11 $ dropWhile (<8) (filter isTrunc primes :: [Integer])
     where
     isTruncLeft s = all (isPrime :: Integer -> Bool) $ take l $ map read $ iterate (drop 1) s
@@ -364,7 +331,7 @@ p37 _ = sum $ take 11 $ dropWhile (<8) (filter isTrunc primes :: [Integer])
         where
         s = show n
 
-p38 :: p -> String
+p38 :: () -> String
 p38 _ = maximum $ filter isPandigit candidates
     where
     candidates = concatMap candidate ranges
@@ -373,30 +340,28 @@ p38 _ = maximum $ filter isPandigit candidates
     isPandigit n = let m = filter (/= '0') n in
                            (length m == 9) && length m == length (Set.fromList m)
 
-p39 :: String -> Int
-p39 input = (snd . maximum) [(length $ triplets p, p) | p <- [2..limit]]
+p39 :: Int -> Int
+p39 limit = (snd . maximum) [(length $ triplets p, p) | p <- [2..limit]]
     where
-    limit = read input :: Int
     triplets p = [(a, b, c) | a <- [2..p `quot` 3],
                             let b = p * (p - 2 * a) `quot` (2 * (p - a)),
                             let c = p - a - b,
                             b > a,
                             p * (p - 2 * a) `rem` (2 * (p - a)) == 0]
 
-p40 :: String -> Int
-p40 input = product [d (10^a) | a <- [0..limit]]
+p40 :: Int -> Int
+p40 limit = product [d (10^a) | a <- [0..limit]]
     where
-    limit = read input :: Int
     d n = digitToInt.last $ take n (concatMap show ([1..] :: [Int]))
 
-p41 :: String -> Integer
+p41 :: () -> Integer
 p41 _ = maximum $ filter isPrime $ concatMap pandigits [4, 7]
     where
     pandigits :: Int -> [Integer]
     pandigits n = map read $ permutations [intToDigit a | a <- [1..n]]
 
-p42 :: String -> Int
-p42 input = length $ filter (`Set.member` triangles) scores
+p42 :: Str -> Int
+p42 (Str input) = length $ filter (`Set.member` triangles) scores
     where
     scores = map wordToNum names
     triangles = Set.fromList $ takeWhile (<=maximum scores) [n * (n + 1) `quot` 2 | n <- [1..]]
@@ -404,14 +369,14 @@ p42 input = length $ filter (`Set.member` triangles) scores
     strip = dropWhileEnd (=='"') . dropWhile (=='"')
     names = map strip $ splitOn "," $ concat $ lines input
 
-p43 :: p -> Int
+p43 :: () -> Int
 p43 _ = sum (map (read . map intToDigit) found :: [Int])
     where
     found = filter test [p | p <- permutations [0..9], p !! 5 == 5]
     test p = all ((==0).uncurry mod) $ zip (subs p) (primes :: [Integer])
     subs p = map (read . (map intToDigit . (\ x -> (\ y z -> take 3 $ drop y z) x p))) [1 .. 7]
 
-p44 :: p -> Int
+p44 :: () -> Int
 p44 _ = head candidates
     where
     pentagonals = [(n*(3*n - 1)) `quot` 2 | n <- [1..]]
@@ -422,10 +387,9 @@ p44 _ = head candidates
     candidates = [j - k | j <- pentagonals, k <- takeWhile (< j) pentagonals,
                       isPentagonal (j - k), isPentagonal (j + k)]
 
-p45 :: String -> Int
-p45 input = head [t | t <- triangles, isPentagonal t, isHexagonal t]
+p45 :: Int -> Int
+p45 start = head [t | t <- triangles, isPentagonal t, isHexagonal t]
     where
-    start = read input :: Int
     triangles = [n * (n + 1) `quot` 2 | n <- [start..]]
     isqrt = (sqrt . fromIntegral) :: Int -> Double
     isPentagonal n = v == fromInteger (round v) && (round v `rem` 6 :: Int) == 0
@@ -435,7 +399,7 @@ p45 input = head [t | t <- triangles, isPentagonal t, isHexagonal t]
         where
         v = isqrt (1 + 8 * n) + 1
 
-p46 :: p -> Integer
+p46 :: () -> Integer
 p46 _ = head $ dropWhile check ([9,11..] :: [Integer])
     where
     check n = any isTwice $ map (n-) $ takeWhile (<= n) primes
@@ -443,23 +407,21 @@ p46 _ = head $ dropWhile check ([9,11..] :: [Integer])
         where
         v = sqrt (fromIntegral m / 2) :: Double
 
-p47 :: String -> Int
-p47 input = get' $ filter check [map facts [a..a + len - 1] | a <- [0..]]
+p47 :: Int -> Int
+p47 len = get' $ filter check [map facts [a..a + len - 1] | a <- [0..]]
     where
     get' = product.head.head
-    len = read input :: Int
     check p = all ((== len) . length) p && (m == nub m)
         where
             m = concat p
     facts n = map (uncurry (*)) $ (count.pfactors) n
 
-p48 :: String -> Integer
-p48 input = last10digits $ sum [n ^ n | n <- [1..limit]]
+p48 :: Integer -> Integer
+p48 limit = last10digits $ sum [n ^ n | n <- [1..limit]]
     where
     last10digits n = n `rem` (10^(10 :: Integer))
-    limit = read input :: Integer
 
-p49 :: p -> Integer
+p49 :: () -> Integer
 p49 _ = flip (!!) 1 $ do
     candidate <- takeWhile (<10000) $ dropWhile (<999) (primes :: [Integer])
     step <- [1..9999]
@@ -470,64 +432,57 @@ p49 _ = flip (!!) 1 $ do
     guard $ all (== head sets) sets
     return . read $ concatMap show candidates
 
-p50 :: String -> (Int, Int)
-p50 input = maximum $ filter (isPrime.snd) $ concatMap gen [take n sums | n <- [1..length sums]]
+p50 :: Int -> (Int, Int)
+p50 limit = maximum $ filter (isPrime.snd) $ concatMap gen [take n sums | n <- [1..length sums]]
     where
-    limit = read input :: Int
     gen n = zip [length n, length n - 1..] (map (last n -) (0:n))
     sums = takeWhile (<limit) cumul
     cumul = scanl1 (+) primes
 
-p52 :: String -> Int
-p52 input = head $ do
+p52 :: Int -> Int
+p52 upTo = head $ do
     n <- [1..] :: [Int]
     let candidates = map (show.(*) n) [1..upTo]
     guard $ all (== Set.fromList (head candidates)) $ map Set.fromList (tail candidates)
     return n
-        where
-         upTo = read input :: Int
 
-p53 :: String -> Int
-p53 input = length $ filter (>limit) $ map combi perms
+p53 :: Integer -> Int
+p53 limit = length $ filter (>limit) $ map combi perms
     where
-    limit = read input :: Integer
     factorials = 1 : map (\n -> product [1..n]) [1..]
     combi (r, n) = factorials !! n `quot` (factorials !! r * factorials !! (n - r))
     perms = [(n, x) | x <- [1..100], n <- [1..x]]
 
-p55 :: String -> Int
-p55 input = length $ filter (not . any isPalindr . candidates) [1..limit]
+p55 :: Integer -> Int
+p55 limit = length $ filter (not . any isPalindr . candidates) [1..limit]
     where
-    limit = read input :: Integer
     rev = read . reverse . show
     isPalindr n = n == rev n
     candidates n = take 50 . drop 1 $ iterate (\x -> x + rev x) n
 
-p56 :: String -> Int
-p56 input = maximum $ map digitSum [a ^ b | a <- [1..limit], b <- [1..limit]]
+p56 :: Integer -> Int
+p56 limit = maximum $ map digitSum [a ^ b | a <- [1..limit], b <- [1..limit]]
     where
-    limit = read input :: Integer
     digitSum = sum . map digitToInt . show
 
-p57 :: String -> Int
-p57 input = length $ filter isLonger $ take limit expansion
+p57 :: Int -> Int
+p57 limit = length $ filter isLonger $ take limit expansion
     where
-    limit = read input :: Int
     isLonger :: Ratio Integer -> Bool
     isLonger n = length (show $ numerator n) > length (show $ denominator n)
     expansion = iterate (\x -> 1 + 1 / (1 + x)) 1
 
-p58 :: String -> Integer
+p58 :: Int -> Integer
 p58 input = fst.head $ dropWhile ((>ratio).snd) $ zip ([3,5..] :: [Integer]) $ zipWith (%) prime (5 : [9,13..])
     where
-    ratio = read input % 100 :: Ratio Int
+    ratio = input % 100 :: Ratio Int
     diagonals = [take 4 $ iterate (\x -> x - 2 * l) s |
                        l <- [1..], let a = 2 * l + 1,
                                    let s = a * a] :: [[Integer]]
     prime = drop 1 $ scanl (\x y -> x + length (filter isPrime y)) 0 diagonals
 
-p59 :: String -> Int
-p59 input = sum $ zipWith xor ciphertxt (cycle key)
+p59 :: Str -> Int
+p59 (Str input) = sum $ zipWith xor ciphertxt (cycle key)
     where
     ciphertxt = map read $ splitOn "," input
     chunks = transpose $ chunksOf 3 ciphertxt
@@ -535,18 +490,15 @@ p59 input = sum $ zipWith xor ciphertxt (cycle key)
     maxCount x = maximum $ map swap $ count x
     key = map ((xor (ord ' ') . snd) . maxCount) chunks
 
-p63 :: p -> Integer
+p63 :: () -> Integer
 p63 _ = sum ([floor(1 / ((1 :: Double) - logBase 10 n)) | n <- [1..9]] :: [Integer])
 
-p69 :: String -> Integer
-p69 input = last $ takeWhile (<limit) $ map product [take n primes | n <- [1..]]
-    where
-        limit = read input :: Integer
+p69 :: Integer -> Integer
+p69 limit = last $ takeWhile (<limit) $ map product [take n primes | n <- [1..]]
 
-p70 :: String -> Integer
-p70 input = snd $ minimum ([(divi n phi, n) | (n, phi) <- candidates, perm n phi] :: [(Double, Integer)])
+p70 :: Integer -> Integer
+p70 limit = snd $ minimum ([(divi n phi, n) | (n, phi) <- candidates, perm n phi] :: [(Double, Integer)])
     where
-        limit = read input :: Integer
         divi a b = fromIntegral a / fromIntegral b
         perm x y = sort (show x) == sort (show y)
         totient p_1 p_2 = (p_1 - 1) * (p_2 - 1)
@@ -556,25 +508,22 @@ p70 input = snd $ minimum ([(divi n phi, n) | (n, phi) <- candidates, perm n phi
             where ps = takeWhile (<=2 * pl) primes
                   pl = head $ dropWhile ((<=limit) . (^(2 :: Integer))) primes
 
-p71 :: String -> Ratio Integer
-p71 input = fst $ until (\(x, y) -> denominator (mediant x y) > limit) farey (0, 1)
+p71 :: Integer -> Ratio Integer
+p71 limit = fst $ until (\(x, y) -> denominator (mediant x y) > limit) farey (0, 1)
     where
-    limit = read input :: Integer
     farey (a, b) = let m = mediant a b in if m < (3 % 7) then (m, b) else (a, m)
     mediant a b = (numerator a + numerator b) % (denominator a + denominator b)
 
-p72 :: String -> Int
-p72 input = fareySum limit - 2
+p72 :: Int -> Int
+p72 limit = fareySum limit - 2
     where
-    limit = read input :: Int
     fareySum m = map f [0..] !! m
         where
         f n = (n*(n + 3)) `quot` 2 - sum [fareySum (n `quot` k) | k <- [2..n]]
 
-p73 :: String -> Int
-p73 input = length $ farey limit
+p73 :: Int -> Int
+p73 limit = length $ farey limit
     where
-    limit = read input :: Int
     farey l = drop 1 $ iFarey (1 % 3, 1 % 2)
         where
         iFarey (a, b)
@@ -583,10 +532,9 @@ p73 input = length $ farey limit
             where
             mediant = (numerator a + numerator b) % (denominator a + denominator b)
 
-p74 :: String -> Int
-p74 input = length $ filter (==60) $ map (length . chain) [1..limit]
+p74 :: Int -> Int
+p74 limit = length $ filter (==60) $ map (length . chain) [1..limit]
     where
-    limit = read input :: Int
     facSum n = sum $ map ((factorials !!) . digitToInt) $ show n
     factorial m = product [1..m]
     factorials = map factorial [0..9]
@@ -599,8 +547,8 @@ p74 input = length $ filter (==60) $ map (length . chain) [1..limit]
             if m `elem` s then return s else
                 modify (\ s' -> m : s') >> build (facSum m)
 
-p75 :: String -> Int       
-p75 input = length $ filter ((==(1 :: Integer)) . snd) $ count $ do
+p75 :: Integer -> Int       
+p75 limit = length $ filter ((==(1 :: Integer)) . snd) $ count $ do
     let mlimit = floor $ sqrt ((fromIntegral limit :: Double) / 2) :: Integer
     m <- [2..mlimit]
     n <- [1..m]
@@ -611,19 +559,15 @@ p75 input = length $ filter ((==(1 :: Integer)) . snd) $ count $ do
                    (m ^ (2 :: Integer)) + (n ^ (2 :: Integer))]
     let s = sum triplet
     [s * i | i <- [1..limit `quot` s]]
-        where
-        limit = read input :: Integer
 
-p77 :: String -> (Int, Integer)
-p77 input = head $ dropWhile ((< limit) . snd) candidates
+p77 :: Integer -> (Int, Integer)
+p77 limit = head $ dropWhile ((< limit) . snd) candidates
     where
-    candidates = [(last p, p31 p (show (last p))) | n <- [1..], let p = take n primes]
-    limit = read input :: Integer
+    candidates = [(last p, p31 p (last p)) | n <- [1..], let p = take n primes]
 
-p78 :: String -> Integer
-p78 input = head [i | (i, p) <- assocs lut, p `rem` limit == 0]
+p78 :: Integer -> Integer
+p78 limit = head [i | (i, p) <- assocs lut, p `rem` limit == 0]
     where
-    limit = read input :: Integer
     pentagonals = sort [n * (3 * n - 1) `quot` 2 | n <- [-250..250], n /= 0]
     terms m = zip (cycle [1, 1, -1, -1]) (takeWhile (<= m) pentagonals)
     lut :: Array Integer Integer
@@ -632,8 +576,8 @@ p78 input = head [i | (i, p) <- assocs lut, p `rem` limit == 0]
            | n == 0 = 1
            | otherwise = sum [s * (lut ! (n - p)) | (s, p) <- terms n]
 
-p79 :: String -> String
-p79 keylog = concatMap (show . snd) $ sort' $ map (\(a, b) -> ((length . nub) b, a)) prec
+p79 :: Str -> String
+p79 (Str keylog) = concatMap (show . snd) $ sort' $ map (\(a, b) -> ((length . nub) b, a)) prec
     where
     attempts = map (map digitToInt ) $ lines keylog
     prec  = Map.toList $ Map.fromListWith (++) $ concatMap assoc attempts
@@ -643,10 +587,9 @@ p79 keylog = concatMap (show . snd) $ sort' $ map (\(a, b) -> ((length . nub) b,
         f [] = Nothing
         f (x:xs) = Just ((x, xs), xs)
 
-p80 :: String -> Int
-p80 input = sum $ concatMap (sqrtDigits 99) [n | n <- [1..limit], not $ isSquare n]
+p80 :: Integer -> Int
+p80 limit = sum $ concatMap (sqrtDigits 99) [n | n <- [1..limit], not $ isSquare n]
     where
-    limit = read input :: Integer
     isSquare :: Integer -> Bool
     isSquare n = let s = ((floor :: Double -> Integer).sqrt.fromIntegral) n in (s * s) == n
     isqrt 0 = 0
@@ -656,15 +599,15 @@ p80 input = sum $ concatMap (sqrtDigits 99) [n | n <- [1..limit], not $ isSquare
     sqrtDigits :: Int -> Integer -> [Int]
     sqrtDigits c x = digits $ isqrt $ x * (10 ^ (2 * c))
 
-p81 :: String -> Integer
-p81 input = head $ foldr fld (scanr1 (+) $ last matrix) (init matrix)
+p81 :: Str -> Integer
+p81 (Str input) = head $ foldr fld (scanr1 (+) $ last matrix) (init matrix)
         where
         matrix = (map (map read . splitOn ",") . lines) input
         fld :: [Integer] -> [Integer] -> [Integer]
         fld cur prev = init $ scanr (\(p, c) a -> c + min a p) (last prev) (zip prev cur)
 
-p82 :: String -> Integer
-p82 input = minimum $ foldr1 fld1 matrix
+p82 :: Str -> Integer
+p82 (Str input) = minimum $ foldr1 fld1 matrix
         where
         matrix = transpose $ (map (map read . splitOn ",") . lines) input
         fld1 :: [Integer] -> [Integer] -> [Integer]
@@ -674,15 +617,13 @@ p82 input = minimum $ foldr1 fld1 matrix
         fld :: [Integer] -> [Integer] -> [Integer]
         fld c' p' = tail $ scanl (\a (p, c) -> c + min a p) (head p') (zip p' c')
 
-p85 :: String -> Integer
-p85 input = let limit = read input :: Integer
-                asum x = x * (x + 1) `div` 2
+p85 :: Integer -> Integer
+p85 limit = let asum x = x * (x + 1) `div` 2
             in snd $ minimum [(abs (asum x * asum y - limit), x * y) | x <- [1 .. 2000], y <- [1 .. 2000]]
 
-p86 :: String -> Integer
-p86 input = fst . head $ dropWhile ((<limit) . snd) isum
+p86 :: Integer -> Integer
+p86 limit = fst . head $ dropWhile ((<limit) . snd) isum
         where
-            limit = read input :: Integer
             candidates = [(l, wh) | l <- [3 .. ], wh <- [3 .. 2 * l],
                             let s = (sqrt . fromInteger) (wh * wh + l * l),
                             s == (fromInteger (round s) :: Double)]
@@ -693,19 +634,17 @@ p86 input = fst . head $ dropWhile ((<limit) . snd) isum
                     halve a = fromIntegral a / 2
             isum = scanl' (\(_, s) (l, wh) -> (l, s + nsol l wh)) (0, 0) candidates
 
-p87 :: String -> Int
-p87 input = length . Set.fromList . filter (< limit) $ nums
+p87 :: Int -> Int
+p87 limit = length . Set.fromList . filter (< limit) $ nums
     where
-    limit = read input :: Int
     plimit = floor (sqrt (fromIntegral limit) :: Double) :: Integer
     primes' = map fromIntegral $ takeWhile (<= plimit) primes
     f a b c = (a ^ (2 :: Int)) + (b ^ (3 :: Int)) + (c ^ (4 :: Int))
     nums = f <$> primes' <*> primes' <*> primes'
 
-p88 :: String -> Int
-p88 input = sum . nub . drop 2 . Map.elems $ Map.foldlWithKey f'' accum cache
+p88 :: Int -> Int
+p88 limit = sum . nub . drop 2 . Map.elems $ Map.foldlWithKey f'' accum cache
         where
-        limit = read input :: Int
         cache = foldl' f Map.empty [2 .. 2 * limit]
         accum = Map.fromList [(n, 2 * n) | n <- [0 .. limit]]
         f m n = case Map.lookup n m of
@@ -722,8 +661,8 @@ p88 input = sum . nub . drop 2 . Map.elems $ Map.foldlWithKey f'' accum cache
                         m2 = Map.fromList $ zip (Map.keys m1) $ repeat n
                     in Map.union m2 m  
 
-p89 :: String -> Int
-p89 input = sum $ map (sum . map gain . romCut) literals
+p89 :: Str -> Int
+p89 (Str input) = sum $ map (sum . map gain . romCut) literals
     where
     literals = lines input
     lut = ["I", "IIII", "IV", "V", "VIIII", "IX", "X", "XXXX", "XL", "L",
@@ -736,7 +675,7 @@ p89 input = sum $ map (sum . map gain . romCut) literals
         | l `elem` ["IIII", "XXXX", "CCCC"] = 2
         | otherwise = 0
 
-p90 :: p -> Int
+p90 :: () -> Int
 p90 _ = length $ filter (\x -> all (`elem` x) sq) ds
     where
     sq = [1, 4, 6, 16, 25, 36, 46, 64, 81]
