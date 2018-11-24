@@ -1,6 +1,6 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module Euler.Util (
-    Solution(..),
+    Solution,
     mkSol,
     Str(..),
     pfactors,
@@ -18,11 +18,9 @@ import System.TimeIt
 import Data.Numbers.Primes
 import Control.Monad.State
 
-data Solution = forall a b. (Show a, Read b) => Solution (b, b -> a)
-mkSol :: (Show a, Read b, Applicative f) => (b -> a, f b) -> f Solution
-mkSol (s, i) = curry Solution <$> i <*> pure s
-runSolution :: Solution -> String
-runSolution (Solution (i, s)) = show . s $ i
+data Solution = forall a b. (Show a, Eq a, Read b) => Solution (b, a, b -> a)
+mkSol :: (Show a, Eq a, Read b, Applicative f) => (b -> a, f b, a) -> f Solution
+mkSol (s, i, a) = (\x y z -> Solution (x, y, z)) <$> i <*> pure a <*> pure s
 
 newtype Str = Str String
 instance Read Str where
@@ -66,5 +64,9 @@ nPerms :: Eq a => Int -> [a] -> [[a]]
 nPerms n = evalStateT (replicateM n choose)
 
 printSolution :: Int -> Solution -> IO ()
-printSolution number problem = timeIt $ putStr $ "Problem " ++
-    show number ++ ": " ++ runSolution problem ++ ": "
+printSolution number (Solution (i, a, s)) = do
+        let sol = s i
+        timeIt $ putStr $ "Problem " ++ show number ++ ": " ++
+            if sol == a then
+                 show sol ++ ": "
+            else "\x1b[31mExpected: " ++ show a ++ " Got: " ++ show sol ++ "\x1b[0m "               
