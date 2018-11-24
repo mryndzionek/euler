@@ -1,6 +1,7 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module Euler.Util (
     Solution(..),
+    mkSol,
     Str(..),
     pfactors,
     divisors,
@@ -17,9 +18,11 @@ import System.TimeIt
 import Data.Numbers.Primes
 import Control.Monad.State
 
-data Solution = forall a b. (Show a, Read b) => Solution (b -> a)
-runSolution :: Solution -> String -> String
-runSolution (Solution s) i = show (s $ read i)
+data Solution = forall a b. (Show a, Read b) => Solution (b, b -> a)
+mkSol :: (Show a, Read b, Applicative f) => (b -> a, f b) -> f Solution
+mkSol (s, i) = curry Solution <$> i <*> pure s
+runSolution :: Solution -> String
+runSolution (Solution (i, s)) = show . s $ i
 
 newtype Str = Str String
 instance Read Str where
@@ -62,6 +65,6 @@ choose = StateT (\s -> s >>= \v -> return (v, delete v s))
 nPerms :: Eq a => Int -> [a] -> [[a]]
 nPerms n = evalStateT (replicateM n choose)
 
-printSolution :: Int -> Solution -> String -> IO ()
-printSolution number problem input = timeIt $ putStr $ "Problem " ++
-    show number ++ ": " ++ runSolution problem input ++ ": "
+printSolution :: Int -> Solution -> IO ()
+printSolution number problem = timeIt $ putStr $ "Problem " ++
+    show number ++ ": " ++ runSolution problem ++ ": "
